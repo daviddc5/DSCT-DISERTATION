@@ -39,29 +39,22 @@ function App() {
     // with the old todos plus the new one
     setTodos(prevTodos => {
       return [...prevTodos, { id: uuidv4(), name: name, complete: false }];
-
-     
     });
   
-
     // Clear the input field by setting its value to null
     todoNameRef.current.value = null;
   }
-
-  
-  function toggleTodo(id) { 
-    const newTodos = [...todos]
-    const todo = newTodos.find(todo => todo.id === id)
-    todo.complete = !todo.complete
-    setTodos(newTodos)
-  };
-  
-  
-  
-  function handleClearStorage() {
-    localStorage.clear();
-    setTodos([]);
-  }
+  // function handleToggleComplete(id) {
+  //   setTodos(prevTodos => {
+  //     const updatedTodos = prevTodos.map(todo => {
+  //       if (todo.id === id) {
+  //         return { ...todo, complete: !todo.complete };
+  //       }
+  //       return todo;
+  //     });
+  //     return updatedTodos;
+  //   });
+  // }
   
   return (
     <div className="container-fluid">
@@ -69,8 +62,7 @@ function App() {
 
       <div className="row mt-3">
         <div className="col-lg-4 col-md-6">
-          
-          <ToDoList todos ={todos} toggleTodo={toggleTodo} />
+          <ToDoList todos={todos} />
         </div>
 
         <div className="col-lg-4 col-md-6">
@@ -96,10 +88,10 @@ function App() {
 
         <div className="col-lg-4 col-md-12">
           <div className="d-flex justify-content-end">
-            <button type="button" className="btn btn-secondary mr-2" onClick={handleClearStorage}>
-              Clear complete
+            <button type="button" className="btn btn-secondary mr-2">
+              Clear completed
             </button>
-            <div className="pt-2">{todos.filter(todo => !todo.complete).length} left to do</div>
+            <div className="pt-2">{todos.length} left to do</div>
           </div>
         </div>
       </div>
@@ -108,4 +100,3 @@ function App() {
 }
 
 export default App;
-
