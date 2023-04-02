@@ -1,0 +1,18 @@
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .list-group-item input[type="checkbox"] {
+    transform: scale(1.5);
+    margin-right: 20px;
+  }
+  
+  .form-check-label {
+    margin-bottom: 0;
+  }
+  
+  .todo-description {
+    margin-top: 10px;
+  }
