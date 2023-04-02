@@ -1,68 +1,50 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { Navbar, Nav } from "react-bootstrap";
+import "./styles/NavBar.css";
 
 function NavBar() {
   return (
-    // Navigation bar with a dark background
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      {/* Link to the home page */}
-      <Link className="navbar-brand" to="/">
-        My ToDo App
-      </Link>
+    // Create a dark-themed responsive navbar using react-bootstrap components
+    <Navbar bg="dark" expand="lg" variant="dark" style={{ backgroundColor: "#050624" }}>
 
-      {/* Button for toggling the navigation menu */}
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
+      {/* Navbar brand/title linking to the home page */}
+      <Navbar.Brand as={Link} to="/">
+        Mindful Tasks
+      </Navbar.Brand>
 
-      {/* Navigation menu */}
-      <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav">
-          {/* Link to the statistics page */}
-          <li className="nav-item">
-            <Link className="nav-link" to="/statistics">
-              Statistics
-            </Link>
-          </li>
+      {/* Hamburger menu button for mobile view */}
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-          {/* Link to the weekly page */}
-          <li className="nav-item">
-            <Link className="nav-link" to="/weekly">
-              Weekly Page
-            </Link>
-          </li>
-
-          {/* Link to the settings page */}
-          <li className="nav-item">
-            <Link className="nav-link" to="/settings">
-              Settings
-            </Link>
-          </li>
-
-          {/* Link to the social page */}
-          <li className="nav-item">
-            <Link className="nav-link" to="/social">
-              Social Page
-            </Link>
-          </li>
-
-          {/* Link to the today page */}
-          <li className="nav-item">
-            <Link className="nav-link" to="/today">
-              Today Page
-            </Link>
-          </li>
-        </ul>
-      </div>
-    </nav>
+      {/* Collapsible navbar section containing navigation links */}
+      <Navbar.Collapse id="basic-navbar-nav">
+        {/* Align the navigation links to the right */}
+        <Nav className="ml-auto">
+          {/* Individual navigation links */}
+          <Nav.Link as={NavLink} to="/" exact activeClassName="active">
+            Home
+          </Nav.Link>
+          <Nav.Link as={NavLink} to="/today" activeClassName="active">
+            Today Page
+          </Nav.Link>
+          <Nav.Link as={NavLink} to="/weekly" activeClassName="active">
+            Weekly Page
+          </Nav.Link>
+          <Nav.Link as={NavLink} to="/newTask" activeClassName="active">
+            New task
+          </Nav.Link>
+          <Nav.Link as={NavLink} to="/social" activeClassName="active">
+            Social Page
+          </Nav.Link>
+          <Nav.Link as={NavLink} to="/statistics" activeClassName="active">
+            Statistics
+          </Nav.Link>
+          <Nav.Link as={NavLink} to="/settings" activeClassName="active">
+            Settings
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   );
 }
 
