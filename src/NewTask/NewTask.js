@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import ToDoList from "./ToDoList";
 import { v4 as uuidv4 } from "uuid";
-import '../styles/NewTask.css';
-import NavBar from "../NavBar";
+import './NewTask.css';
+import NavBar from "../NavBar/NavBar";
 
 
 

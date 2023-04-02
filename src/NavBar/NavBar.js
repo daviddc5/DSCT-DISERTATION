@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
-import "./styles/NavBar.css";
+import "./NavBar.css";
 
 function NavBar() {
   return (
@@ -21,25 +21,24 @@ function NavBar() {
         {/* Align the navigation links to the right */}
         <Nav className="ml-auto">
           {/* Individual navigation links */}
-          <Nav.Link as={NavLink} to="/" exact activeClassName="active">
-            Home
-          </Nav.Link>
-          <Nav.Link as={NavLink} to="/today" activeClassName="active">
+         
+          <Nav.Link as={NavLink} to="/today" activeclassname="active">
             Today Page
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/weekly" activeClassName="active">
+          <Nav.Link as={NavLink} to="/weekly" activeclassname="active">
             Weekly Page
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/newTask" activeClassName="active">
+          <Nav.Link as={NavLink} to="/newTask" activeclassname="active">
             New task
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/social" activeClassName="active">
-            Social Page
-          </Nav.Link>
-          <Nav.Link as={NavLink} to="/statistics" activeClassName="active">
+          <Nav.Link as={NavLink} to="/statistics" activeclassname="active">
             Statistics
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/settings" activeClassName="active">
+          <Nav.Link as={NavLink} to="/social" activeclassname="active">
+            Social Page
+          </Nav.Link>
+  
+          <Nav.Link as={NavLink} to="/settings" activeclassname="active">
             Settings
           </Nav.Link>
         </Nav>
