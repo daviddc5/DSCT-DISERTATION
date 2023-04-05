@@ -27,16 +27,28 @@ function NewTask() {
   const todoHoursRef = useRef();
   const todoAppsRef = useRef();
   const todoContactsRef = useRef();
-  
-//a function that maps over the days array to generate an array of checkboxes, each with its own ref, and return the array of refs.
-//   function useTodoDaysRefs() {
-//     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-//     return days.map(() => useRef());
-//   }
-// //array of refs for dats
-//   const todoDaysRefs = useTodoDaysRefs();
 
+
+  // 1. Update your state to include an array of day objects:
+  const [days, setDays] = useState([
+    { name: "Sunday", checked: false },
+    { name: "Monday", checked: false },
+    { name: "Tuesday", checked: false },
+    { name: "Wednesday", checked: false },
+    { name: "Thursday", checked: false },
+    { name: "Friday", checked: false },
+    { name: "Saturday", checked: false },
+  ]);
   
+  //2. Create a function to handle toggling the checked state of a day:
+  function handleToggleDay(index) {
+    setDays((prevDays) => {
+      const updatedDays = [...prevDays];
+      updatedDays[index].checked = !updatedDays[index].checked;
+     
+      return updatedDays;
+    });
+  }
   
 
 
@@ -53,6 +65,11 @@ function NewTask() {
   }, [todos]);
 
 
+
+
+
+
+
   // This is a function that handles the addition of a new todo item.
   function handleAddTodo() { 
     const name = todoNameRef.current.value;
@@ -61,18 +78,23 @@ function NewTask() {
     const hours = todoHoursRef.current.value;
     const apps = todoAppsRef.current.value;
     const contacts = todoContactsRef.current.value;
-  // Create an array of selected day indices
-    // const days = todoDaysRefs
-    // .map((dayRef, index) => (dayRef.current.checked ? index : null))
-    // .filter((index) => index !== null);
 
-    // console.log(days)
+    // array of selected day names
+    const selectedDays = days
+    .filter((day) => day.checked)
+    .map((day) => day.name);
+
+    
+
+
     // If either field is empty, the function returns without doing anything.
     if (name === "" || description === "" || goal === "" ||  hours === "" || apps === "" || contacts === "") return;
 
     // If editingTodo is not null, this means that an existing todo is being edited. 
     // The function updates the todo by mapping through the previous todos and replacing the todo with the matching editingTodo ID with an updated version 
     if (editingTodo) {
+        // array of selected day names
+       
       setTodos((prevTodos) =>
         prevTodos.map((todo) => {
           if (todo.id === editingTodo.id) {
@@ -81,10 +103,11 @@ function NewTask() {
               name: name, 
               description: description, 
               goal: goal,
-              
               hours: hours,
               apps: apps,
-              contacts: contacts
+              contacts: contacts,
+              days:selectedDays
+              
             };
           } else {
             return todo;
@@ -97,6 +120,8 @@ function NewTask() {
     // If not editing an existing todo, create a new todo object and add it to the todos state with default values for additional properties
 
     else {
+       
+
       setTodos((prevTodos) => [
         ...prevTodos,
         { 
@@ -105,10 +130,10 @@ function NewTask() {
           description: description, 
           complete: false,
           goal: goal,
-          
           hours: hours,
           apps: apps,
-          contacts: contacts
+          contacts: contacts,
+          days:selectedDays
         },
       ]);
     }
@@ -116,7 +141,6 @@ function NewTask() {
     todoDescriptionRef.current.value = null;
     todoGoalRef.current.value = null;
     //Resetting the checkbox inputs to unchecked after adding a todo, using forEach on the todoDaysRefs array.
-    
     todoHoursRef.current.value = null;
     todoAppsRef.current.value = null;
     todoContactsRef.current.value = null;
@@ -199,6 +223,23 @@ function NewTask() {
   ref={todoGoalRef}
 />
 {/* days reference */}
+{/* Add a new input for each day in your form, using the name property from each day object as the label and the checked property as the value: */}
+
+{days.map((day, index) => (
+  <div className="form-check form-check-inline" key={index}>
+    <input
+      className="form-check-input"
+      type="checkbox"
+      id={`day-${day.name}`}
+      value={day.checked}
+      onChange={() => handleToggleDay(index)}
+    />
+    <label className="form-check-label" htmlFor={`day-${day.name}`}>
+      {day.name}
+    </label>
+  </div>
+
+))}
 
 
 

@@ -7,6 +7,8 @@ export default function Todo({ todo, toggleTodo, editTodo }) {
     editTodo(todo);
   }
 
+
+
   return (
     <li>
       <input
@@ -14,7 +16,7 @@ export default function Todo({ todo, toggleTodo, editTodo }) {
         checked={todo.complete}
         onChange={() => toggleTodo(todo.id)}
       />
-      <span>{todo.name} - {todo.description} - {todo.goal} - {todo.hours} - {todo.apps} - {todo.contacts}</span>
+      <span>{todo.name} - {todo.description} - {todo.goal} - {todo.hours} - {todo.apps} -  {todo.days} - {todo.contacts}</span>
       
       <button onClick={handleEditClick}>Edit</button>
     </li>
