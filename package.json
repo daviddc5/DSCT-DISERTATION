@@ -18,6 +18,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "stop": "echo 'Stopping the application...'",
+
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

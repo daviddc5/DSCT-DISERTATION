@@ -16,15 +16,9 @@ function NewTask() {
   // editingTodo state is used to keep track of which todo is being edited
   const [editingTodo, setEditingTodo] = useState(null);
 
-
-
-
 // used to access the values of the input fields in the form at any given time
   const todoNameRef = useRef();
   const todoDescriptionRef = useRef();
-  const todoGoalRef = useRef();
- 
-  const todoHoursRef = useRef();
   const todoAppsRef = useRef();
   const todoContactsRef = useRef();
 
@@ -42,10 +36,21 @@ function NewTask() {
   
   //2. Create a function to handle toggling the checked state of a day:
   function handleToggleDay(index) {
+    
+
     setDays((prevDays) => {
-      const updatedDays = [...prevDays];
+// If updatedDays is not updating correctly, there might be a problem with the way you are using the spread operator to create a copy of the previous state.
+
+// Instead of creating a shallow copy of the previous state using the spread operator, try using a deep copy using JSON.parse(JSON.stringify()). This will create a new object that is completely separate from the previous state.
+
+// Here's an example of how you can use JSON.parse(JSON.stringify()) to create a deep copy of prevDays:
+
+// This is instead of const updatedDays = [...prevDays]
+      const updatedDays = JSON.parse(JSON.stringify(prevDays));
       updatedDays[index].checked = !updatedDays[index].checked;
-     
+    
+      console.log(updatedDays)
+      // console.log(updatedDays[index].checked)
       return updatedDays;
     });
   }
@@ -74,21 +79,25 @@ function NewTask() {
   function handleAddTodo() { 
     const name = todoNameRef.current.value;
     const description = todoDescriptionRef.current.value;
-    const goal = todoGoalRef.current.value;
-    const hours = todoHoursRef.current.value;
+
     const apps = todoAppsRef.current.value;
     const contacts = todoContactsRef.current.value;
+      // array of selected day names
 
-    // array of selected day names
-    const selectedDays = days
-    .filter((day) => day.checked)
-    .map((day) => day.name);
+      console.log(days)
+      const selectedDays = days
 
-    
+      .filter((day) => day.checked)
+      .map((day) => day.name);
+      console.log(selectedDays)
+      
+  
 
+  
 
     // If either field is empty, the function returns without doing anything.
-    if (name === "" || description === "" || goal === "" ||  hours === "" || apps === "" || contacts === "") return;
+    if (name === "" || description === "" || 
+       apps === "" || contacts === "") return;
 
     // If editingTodo is not null, this means that an existing todo is being edited. 
     // The function updates the todo by mapping through the previous todos and replacing the todo with the matching editingTodo ID with an updated version 
@@ -102,11 +111,10 @@ function NewTask() {
               ...todo, 
               name: name, 
               description: description, 
-              goal: goal,
-              hours: hours,
               apps: apps,
               contacts: contacts,
               days:selectedDays
+              
               
             };
           } else {
@@ -129,8 +137,6 @@ function NewTask() {
           name: name, 
           description: description, 
           complete: false,
-          goal: goal,
-          hours: hours,
           apps: apps,
           contacts: contacts,
           days:selectedDays
@@ -139,9 +145,9 @@ function NewTask() {
     }
     todoNameRef.current.value = null;
     todoDescriptionRef.current.value = null;
-    todoGoalRef.current.value = null;
+   
     //Resetting the checkbox inputs to unchecked after adding a todo, using forEach on the todoDaysRefs array.
-    todoHoursRef.current.value = null;
+   
     todoAppsRef.current.value = null;
     todoContactsRef.current.value = null;
   }
@@ -151,9 +157,6 @@ function NewTask() {
     setEditingTodo(todo);
     todoNameRef.current.value = todo.name;
     todoDescriptionRef.current.value = todo.description;
-    todoGoalRef.current.value = todo.goal;
-   
-    todoHoursRef.current.value = todo.hours;
     todoAppsRef.current.value = todo.apps;
     todoContactsRef.current.value = todo.contacts;}
 
@@ -190,6 +193,7 @@ function NewTask() {
     <div className="col-lg-4 col-md-6">
     <ToDoList
     todos={todos}
+    
     toggleTodo={handleToggleComplete}
     editTodo={handleEditTodoClick}
     
@@ -202,7 +206,7 @@ function NewTask() {
     <input
     type="text"
     className="form-control"
-    placeholder="Add a new todo"
+    placeholder="Name of the Goal"
     ref={todoNameRef}
       />
 {/*  Description reference */}
@@ -214,14 +218,6 @@ function NewTask() {
     ref={todoDescriptionRef}
     />
 
-   
-{/* Goal reference */}
-  <input
-  type="text"
-  className="form-control"
-  placeholder="Add a goal for the todo"
-  ref={todoGoalRef}
-/>
 {/* days reference */}
 {/* Add a new input for each day in your form, using the name property from each day object as the label and the checked property as the value: */}
 
@@ -242,15 +238,6 @@ function NewTask() {
 ))}
 
 
-
-
-{/* number of hours to complete */}
-<input
-  type="number"
-  className="form-control"
-  placeholder="Add the number of hours to complete the todo"
-  ref={todoHoursRef}
-/>
 {/* apps to block */}
 <input
   type="text"
