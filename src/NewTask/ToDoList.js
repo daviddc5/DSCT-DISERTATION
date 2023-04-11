@@ -11,7 +11,7 @@ function ToDoList(props) {
           className={`list-group-item d-flex justify-content-between align-items-center ${
             todo.complete ? "bg-success text-white" : ""
           }`}
-          key={uuidv4()}
+          key={todo.id}
         >
           <div className="d-flex align-items-center">
             <div className="form-check mr-3">
@@ -33,12 +33,11 @@ function ToDoList(props) {
                   {todo.name}
                 </label>
               </div>
-              <p className="mb-0">{todo.description}</p>
-              <p className="mb-0">Name of the goal: {todo.goal}</p>
+              <p className="mb-0">Description: {todo.description}</p>
+              
               <p className="mb-0">Days to work on: {todo.days.join(", ")}</p>
                   
-              <p className="mb-0">Apps to block: {todo.apps}</p>
-              <p className="mb-0">Contacts: {todo.contacts}</p>
+              <p className="mb-0">Apps required to work on goal:  {todo.apps}</p>
             </div>
           </div>
           <div>
