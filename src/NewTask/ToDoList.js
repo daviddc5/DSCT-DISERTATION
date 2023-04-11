@@ -38,7 +38,7 @@ function ToDoList(props) {
               
               <p className="mb-0">Days to work on: {todo.days.join(", ")}</p>
                   
-              <p className="mb-0">Apps required to work on goal:  {todo.apps}</p>
+              <p className="mb-0">Apps required to work on goal:  {todo.software.join(", ")}</p>
             </div>
           </div>
           <div>

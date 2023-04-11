@@ -16,7 +16,7 @@ export default function Todo({ todo, toggleTodo, editTodo }) {
         checked={todo.complete}
         onChange={() => toggleTodo(todo.id)}
       />
-      <span>{todo.name} - {todo.description} - {todo.apps} -  {todo.days}</span>
+      <span>{todo.name} - {todo.description} - {todo.software} -  {todo.goalType} - {todo.days} </span>
       {console.log(todo.days)}
       
       <button onClick={handleEditClick}>Edit</button>

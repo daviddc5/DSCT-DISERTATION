@@ -1,12 +1,19 @@
-// importing react hooks
+// Importing React and hooks
 import React, { useState, useRef, useEffect } from "react";
+
+// Importing external libraries
+import { v4 as uuidv4 } from "uuid";
+import Select from "react-select";
+
+// Importing local components and utilities
 import ToDoList from "./ToDoList";
-import './NewTask.css';
 import NavBar from "../NavBar/NavBar";
-import { v4 as uuidv4 } from 'uuid';
+import softwareOptions from "./softwareOptions";
 
+// Importing styles
+import "./NewTask.css";
 
-// defining a variable for storing the todos
+// Defining a variable for storing the todos
 const LOCAL_STORAGE_KEY = "todoApp.todos";
 
 // add long or short term goal
@@ -22,11 +29,9 @@ function NewTask() {
 // used to access the values of the input fields in the form at any given time
   const todoNameRef = useRef();
   const todoDescriptionRef = useRef();
-  const todoAppsRef = useRef();
+ 
 
-
-
-
+  
   // 1. Update your state to include an array of day objects:
   const [days, setDays] = useState([
     { name: "Sunday", checked: false },
@@ -41,31 +46,39 @@ function NewTask() {
 //Add a new state variable to store the selected goal type.
     const [goalType, setGoalType] = useState(null);
 
+// new state variable for the selected software:
+
+const [selectedSoftware, setSelectedSoftware] = useState([]);
+
+
+
+
+//function to handle the change in the selected software
+
+function handleSelectedSoftwareChange(selectedOptions) {
+  setSelectedSoftware(selectedOptions);
+}
+
+
 // handle the change of the goal type.
   function handleGoalTypeChange(e) {
     setGoalType(e.target.value);
   }
     
+
+  function handleDaysChange(selectedOptions) {
+    const selectedDayNames = selectedOptions.map(option => option.value);
+    setDays(prevDays => {
+      return prevDays.map(day => {
+        return {
+          ...day,
+          checked: selectedDayNames.includes(day.name)
+        };
+      });
+    });
+  }
   
-// This function handles toggling the checked state of a day based on the provided index.
-function handleToggleDay(index) {
 
-  // We use the 'setDays' function from the state hook to update the 'days' array in state.
-  // We pass a function to setDays that takes the previous state 'prevDays' as input and returns the updated state.
-  setDays((prevDays) => {
-    // We create a deep copy of the previous state using JSON.parse(JSON.stringify()).
-    const updatedDays = JSON.parse(JSON.stringify(prevDays));
-    
-    // We toggle the checked state of the day at the provided index.
-    updatedDays[index].checked = !updatedDays[index].checked;
-    
-    // We log the updated state to the console.
-    console.log(updatedDays)
-
-    // We return the updated state to update the 'days' array in state.
-    return updatedDays;
-  });
-}
 
 
   // These effects handle the storage of todos in local storage. 
@@ -111,24 +124,32 @@ useEffect(() => {
   function handleAddTodo() { 
     const name = todoNameRef.current.value;
     const description = todoDescriptionRef.current.value;
+// array of selected day names
 
-    const apps = todoAppsRef.current.value;
-   
-      // array of selected day names
-
-    
       const selectedDays = days
 
       .filter((day) => day.checked)
       .map((day) => day.name);
       console.log(selectedDays)
+
+    const software = selectedSoftware.map((option) => option.value)
+
+
       
-// If either field is empty, the function returns without doing anything.
-    if (name === "" || description === "" || 
-       apps === "" || selectedDays.length  === 0) return;
+// If any field is empty or not selected, the function returns without doing anything.
+if (
+  name === "" ||
+  description === "" ||
+  selectedDays.length === 0 ||
+  goalType === null ||
+  selectedSoftware.length === 0
+) return;
+
 
 // Set the checked property of each day object to false
       const resetDays = days.map((day) => ({ ...day, checked: false }));
+
+    
 
     // If editingTodo is not null, this means that an existing todo is being edited. 
     // The function updates the todo by mapping through the previous todos and replacing the todo with the matching editingTodo ID with an updated version 
@@ -143,7 +164,7 @@ useEffect(() => {
              
               name: name, 
               description: description, 
-              apps: apps,
+              software: software,
               days:selectedDays,
               goalType: goalType
               
@@ -166,7 +187,7 @@ useEffect(() => {
           name: name, 
           description: description, 
           complete: false,
-          apps: apps,
+          software: software,
           days:selectedDays,
           goalType: goalType
         },
@@ -176,11 +197,13 @@ useEffect(() => {
     todoDescriptionRef.current.value = null;
    
     //Resetting the checkbox inputs to unchecked after adding a todo, using forEach on the todoDaysRefs array.
-   
-    todoAppsRef.current.value = null;
-    
+
     setDays(resetDays);
     setGoalType(null);
+
+    // Reset the selected software to an empty array
+    setSelectedSoftware([]);
+   
 
     // set the days to false
   }
@@ -190,7 +213,7 @@ useEffect(() => {
     setEditingTodo(todo);
     todoNameRef.current.value = todo.name;
     todoDescriptionRef.current.value = todo.description;
-    todoAppsRef.current.value = todo.apps;
+    
     setGoalType(todo.goalType);
 
       // Update the 'days' state based on the editingTodo.days array
@@ -202,6 +225,13 @@ useEffect(() => {
       };
       });
       });
+
+    // ...
+  const selectedSoftwareOptions = todo.software.map((software) =>
+  softwareOptions.find((option) => option.value === software)
+);
+setSelectedSoftware(selectedSoftwareOptions);
+      
 
   
   }
@@ -228,117 +258,130 @@ useEffect(() => {
   }
 
 
-  return (
-    <div>
-    <div>
-    {/* navBar div */}
-    <NavBar /> 
-    </div>
-{/* Runs toDoList component */}
-    
-    <div className="container-fluid">
-    <div className="row mt-3">
-    <div className="col-lg-4 col-md-6">
-    <ToDoList
-    todos={todos}
-    
-    toggleTodo={handleToggleComplete}
-    editTodo={handleEditTodoClick}
-    
-    />
-    </div>
-{/*  Name reference */}
-    <div className="col-lg-4 col-md-6">
-    <form>
-    <div className="form-group">
-    <input
-    type="text"
-    className="form-control"
-    placeholder="Name of the Goal"
-    ref={todoNameRef}
-      />
-{/*  Description reference */}
+return (
+<div>
+<div>
+{/* navBar div */}
+<NavBar />
+</div>
 
-    <input
-    type="text"
-    className="form-control"
-    placeholder="Add a description for the todo"
-    ref={todoDescriptionRef}
-    />
+<div className="container-fluid">
+<div className="row mt-3">
+{/* ToDoList column */}
+<div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+<ToDoList
+todos={todos}
+toggleTodo={handleToggleComplete}
+editTodo={handleEditTodoClick}
+/>
+</div>
+
+{/* Form column */}
+<div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+<div className="form-container">
+{/* Form content */}
+
+{/*  Name reference */}
+<label htmlFor="todoName">Name of the Goal</label>
+<input
+type="text"
+className="form-control"
+placeholder="Name of the Goal"
+ref={todoNameRef}
+/>
+{/*  Description reference */}
+<label htmlFor="todoDescription">Add a description for the todo</label>
+<input
+type="text"
+className="form-control"
+placeholder="Add a description for the todo"
+ref={todoDescriptionRef}
+/>
 
 {/* days reference */}
 {/* Add a new input for each day in your form, using the name property from each day object as the label and the checked property as the value: */}
 
-{days.map((day, index) => (
-  <div className="form-check form-check-inline" key={index}>
-    <input
-      className="form-check-input"
-      type="checkbox"
-      id={`day-${day.name}`}
-      checked ={day.checked}
-      onChange={() => handleToggleDay(index)}
-    />
-    <label className="form-check-label" htmlFor={`day-${day.name}`}>
-      {day.name}
-    </label>
-  </div>
-
-))}
-{/* radio buttons for short-term and long-term goals inside the form. */}
 <div className="form-group">
-  <div className="form-check">
-    <input
-      className="form-check-input"
-      type="radio"
-      name="goalType"
-      id="short-term"
-      value="short-term"
-      checked={goalType === "short-term"}
-      onChange={handleGoalTypeChange}
-    />
-    <label className="form-check-label" htmlFor="short-term">
-      Short-term Goal
-    </label>
-  </div>
-  <div className="form-check">
-    <input
-      className="form-check-input"
-      type="radio"
-      name="goalType"
-      id="long-term"
-      value="long-term"
-      checked={goalType === "long-term"}
-      onChange={handleGoalTypeChange}
-    />
-    <label className="form-check-label" htmlFor="long-term">
-      Long-term Goal
-    </label>
-  </div>
-</div>
-
-
-{/* apps to block */}
-<input
-  type="text"
-  className="form-control"
-  placeholder="Applications required for the goal"
-  ref={todoAppsRef}
+<label htmlFor="days">Days to work on goal</label>
+<Select
+isMulti
+className="basic-multi-select"
+classNamePrefix="select"
+id="days"
+options={days.map(day => ({ value: day.name, label: day.name }))}
+value={days.filter(day => day.checked).map(day => ({ value: day.name, label: day.name }))}
+onChange={handleDaysChange}
 />
+</div>
+
+
+
+{/* radio buttons for short-term and long-term goals inside the form. */}
+<label htmlFor="shortOrLongTermDescription">Select the type of Goal:</label>
+<div className="form-group">
+<div className="form-check">
+<input
+className="form-check-input"
+type="radio"
+name="goalType"
+id="short-term"
+value="short-term"
+checked={goalType === "short-term"}
+onChange={handleGoalTypeChange}
+/>
+<label className="form-check-label" htmlFor="short-term">
+Short-term Goal
+</label>
+</div>
+<div className="form-check">
+<input
+className="form-check-input"
+type="radio"
+name="goalType"
+id="long-term"
+value="long-term"
+checked={goalType === "long-term"}
+onChange={handleGoalTypeChange}
+/>
+<label className="form-check-label" htmlFor="long-term">
+Long-term Goal
+</label>
+</div>
+</div>
+
+
+{/* software */}
+<div className="form-group">
+  <label htmlFor="software">Applications required for the goal</label>
+  <Select
+    isMulti
+    className="basic-multi-select"
+    classNamePrefix="select"
+    id="software"
+    options={softwareOptions}
+    value={selectedSoftware}
+    onChange={handleSelectedSoftwareChange}
+  />
+</div>
+
+
+
+<button
+  type="button"
+  className="btn btn-primary mt-2" // Added margin-top for better spacing
+  onClick={handleAddTodo}
+>
+  Add to do
+</button>
+
 
 </div>
-{/* button that when clicked calls the handle add to do function */}
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleAddTodo}
-            >
-              Add to do
-            </button>
-          </form>
-        </div>
-{/* sets button that when clicked  will clear storage */}
-        <div className="col-lg-4 col-md-12">
-          <div className="d-flex justify-content-end">
+</div>
+</div>
+
+
+ {/* Clear storage */}
+ <div className="d-flex justify-content-end">
             <button
               type="button"
               className="btn btn-secondary mr-2"
@@ -349,14 +392,15 @@ useEffect(() => {
             <div className="pt-2">
               {todos.filter((todo) => !todo.complete).length} left to do
             </div>
+            
           </div>
         </div>
+
       </div>
-      </div>
-  </div>
-  
-    
-  );
-}  
+      
+   
+);
+
+}
 
 export default NewTask;

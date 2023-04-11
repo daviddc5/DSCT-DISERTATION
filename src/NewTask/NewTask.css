@@ -1,19 +1,14 @@
-.list-group-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .list-group-item input[type="checkbox"] {
-    transform: scale(1.5);
-    margin-right: 20px;
-  }
-  
-  .form-check-label {
-    margin-bottom: 0;
-  }
-  
-  .todo-description {
-    margin-top: 10px;
-  }
+/* NewTask.css */
 
+.form-container {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  margin-bottom: 1rem;
+}
+
+.form-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
