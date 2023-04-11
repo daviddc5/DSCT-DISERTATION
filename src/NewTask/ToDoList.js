@@ -33,6 +33,7 @@ function ToDoList(props) {
                   {todo.name}
                 </label>
               </div>
+              <p className="mb-0">Goal type:  {todo.goalType}</p>
               <p className="mb-0">Description: {todo.description}</p>
               
               <p className="mb-0">Days to work on: {todo.days.join(", ")}</p>

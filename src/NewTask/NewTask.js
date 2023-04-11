@@ -23,7 +23,8 @@ function NewTask() {
   const todoNameRef = useRef();
   const todoDescriptionRef = useRef();
   const todoAppsRef = useRef();
-  
+
+
 
 
   // 1. Update your state to include an array of day objects:
@@ -36,6 +37,15 @@ function NewTask() {
     { name: "Friday", checked: false },
     { name: "Saturday", checked: false },
   ]);
+
+//Add a new state variable to store the selected goal type.
+    const [goalType, setGoalType] = useState(null);
+
+// handle the change of the goal type.
+  function handleGoalTypeChange(e) {
+    setGoalType(e.target.value);
+  }
+    
   
 // This function handles toggling the checked state of a day based on the provided index.
 function handleToggleDay(index) {
@@ -134,7 +144,8 @@ useEffect(() => {
               name: name, 
               description: description, 
               apps: apps,
-              days:selectedDays
+              days:selectedDays,
+              goalType: goalType
               
             };
           } else {
@@ -156,8 +167,8 @@ useEffect(() => {
           description: description, 
           complete: false,
           apps: apps,
-       
-          days:selectedDays
+          days:selectedDays,
+          goalType: goalType
         },
       ]);
     }
@@ -169,6 +180,8 @@ useEffect(() => {
     todoAppsRef.current.value = null;
     
     setDays(resetDays);
+    setGoalType(null);
+
     // set the days to false
   }
   
@@ -178,6 +191,8 @@ useEffect(() => {
     todoNameRef.current.value = todo.name;
     todoDescriptionRef.current.value = todo.description;
     todoAppsRef.current.value = todo.apps;
+    setGoalType(todo.goalType);
+
       // Update the 'days' state based on the editingTodo.days array
       setDays((prevDays) => {
       return prevDays.map((day) => {
@@ -187,6 +202,7 @@ useEffect(() => {
       };
       });
       });
+
   
   }
 
@@ -268,6 +284,37 @@ useEffect(() => {
   </div>
 
 ))}
+{/* radio buttons for short-term and long-term goals inside the form. */}
+<div className="form-group">
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="radio"
+      name="goalType"
+      id="short-term"
+      value="short-term"
+      checked={goalType === "short-term"}
+      onChange={handleGoalTypeChange}
+    />
+    <label className="form-check-label" htmlFor="short-term">
+      Short-term Goal
+    </label>
+  </div>
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="radio"
+      name="goalType"
+      id="long-term"
+      value="long-term"
+      checked={goalType === "long-term"}
+      onChange={handleGoalTypeChange}
+    />
+    <label className="form-check-label" htmlFor="long-term">
+      Long-term Goal
+    </label>
+  </div>
+</div>
 
 
 {/* apps to block */}
