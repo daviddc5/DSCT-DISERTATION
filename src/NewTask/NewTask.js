@@ -10,21 +10,18 @@ import ToDoList from "./ToDoList";
 import NavBar from "../NavBar/NavBar";
 import softwareOptions from "./softwareOptions";
 // import weely page
-
-
 // Importing styles
 import "./NewTask.css";
 
 
-// Defining a variable for storing the todos
-const LOCAL_STORAGE_KEY = "todoApp.todos";
+
 
 // add long or short term goal
 // one is adding manualy and another is timer
 // main react App
-function NewTask() {
+function NewTask({todos, setTodos}) {
   // Initialize the state variable 'todos' as an empty array and declare the function 'setTodos' to update it
-  const [todos, setTodos] = useState([]);
+  // const [todos, setTodos] = useState([]);
 
   // editingTodo state is used to keep track of which todo is being edited
   const [editingTodo, setEditingTodo] = useState(null);
@@ -47,7 +44,7 @@ function NewTask() {
   ]);
 
 //Add a new state variable to store the selected goal type.
-    const [goalType, setGoalType] = useState(null);
+ const [goalType, setGoalType] = useState(null);
 
 // new state variable for the selected software:
 
@@ -84,17 +81,6 @@ function handleSelectedSoftwareChange(selectedOptions) {
 
 
 
-  // These effects handle the storage of todos in local storage. 
-  // The first effect retrieves any previously saved todos and updates the todos state with them on mount. 
-  // The second effect updates local storage with any changes to the todos state.
-  useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    if (storedTodos) setTodos((prevTodos) => [...prevTodos, ...storedTodos]);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
-  }, [todos]);
 
 
  // 1. useEffect hook that runs when the editingTodo state changes.
@@ -253,8 +239,7 @@ setSelectedSoftware(selectedSoftwareOptions);
       return updatedTodos;
     });
   }
-
-
+  
   function handleClearStorage() {
     localStorage.clear();
     setTodos([]);
@@ -277,9 +262,6 @@ todos={todos}
 toggleTodo={handleToggleComplete}
 editTodo={handleEditTodoClick}
 />
-
-
-
 </div>
 
 {/* Form column */}
@@ -320,8 +302,6 @@ onChange={handleDaysChange}
 />
 </div>
 
-
-
 {/* radio buttons for short-term and long-term goals inside the form. */}
 <label htmlFor="shortOrLongTermDescription">Select the type of Goal:</label>
 <div className="form-group">
@@ -355,7 +335,6 @@ Long-term Goal
 </div>
 </div>
 
-
 {/* software */}
 <div className="form-group">
   <label htmlFor="software">Applications required for the goal</label>
@@ -369,9 +348,6 @@ Long-term Goal
     onChange={handleSelectedSoftwareChange}
   />
 </div>
-
-
-
 <button
   type="button"
   className="btn btn-primary mt-2" // Added margin-top for better spacing
@@ -379,8 +355,6 @@ Long-term Goal
 >
   Add to do
 </button>
-
-
 </div>
 </div>
 </div>

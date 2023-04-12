@@ -1,0 +1,21 @@
+.legend {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .badge {
+    font-size: 1rem;
+    padding: 0.5rem;
+  }
+  
+  .short-term {
+    background-color: #89CFF0;
+    color: #000;
+  }
+  
+  .long-term {
+    background-color: #3A5F7D;
+    color: #FFF;
+  }
+  
