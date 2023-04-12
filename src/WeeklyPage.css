@@ -9,13 +9,17 @@
     padding: 0.5rem;
   }
   
-  .short-term {
-    background-color: #89CFF0;
-    color: #000;
-  }
-  
-  .long-term {
-    background-color: #3A5F7D;
-    color: #FFF;
+.tasks .badge.short-term {
+  background-color: #89CFF0;
+  color: #000;
+}
+
+.tasks .badge.long-term {
+  background-color: #3A5F7D;
+  color: #FFF;
+}
+/* css to make button for description smaller */
+.smaller {
+    font-size: 0.8rem;
   }
   

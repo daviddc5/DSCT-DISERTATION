@@ -10,7 +10,14 @@ import NewTask from './NewTask/NewTask';
 import TodayPage from './TodayPage';
 
 function AppRoutes() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    const storedTodos = localStorage.getItem('todos');
+    return storedTodos ? JSON.parse(storedTodos) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
 
   return (
     <Routes>
@@ -24,6 +31,5 @@ function AppRoutes() {
     </Routes>
   );
 }
-
 
 export default AppRoutes;

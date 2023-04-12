@@ -13,25 +13,14 @@ import softwareOptions from "./softwareOptions";
 // Importing styles
 import "./NewTask.css";
 
-
-
-
-// add long or short term goal
-// one is adding manualy and another is timer
-// main react App
 function NewTask({todos, setTodos}) {
-  // Initialize the state variable 'todos' as an empty array and declare the function 'setTodos' to update it
-  // const [todos, setTodos] = useState([]);
-
   // editingTodo state is used to keep track of which todo is being edited
   const [editingTodo, setEditingTodo] = useState(null);
 
 // used to access the values of the input fields in the form at any given time
   const todoNameRef = useRef();
   const todoDescriptionRef = useRef();
- 
 
-  
   // 1. Update your state to include an array of day objects:
   const [days, setDays] = useState([
     { name: "Sunday", checked: false },
@@ -49,6 +38,8 @@ function NewTask({todos, setTodos}) {
 // new state variable for the selected software:
 
 const [selectedSoftware, setSelectedSoftware] = useState([]);
+
+const [dueDate, setDueDate] = useState(null);
 
 
 
@@ -131,8 +122,11 @@ if (
   description === "" ||
   selectedDays.length === 0 ||
   goalType === null ||
-  selectedSoftware.length === 0
-) return;
+  selectedSoftware.length === 0 ||
+  !dueDate // assuming dueDate is a variable that stores the entered due date
+) {
+  return;
+}
 
 
 // Set the checked property of each day object to false
@@ -155,7 +149,9 @@ if (
               description: description, 
               software: software,
               days:selectedDays,
-              goalType: goalType
+              goalType: goalType,
+              dueDate: dueDate
+
               
             };
           } else {
@@ -178,7 +174,8 @@ if (
           complete: false,
           software: software,
           days:selectedDays,
-          goalType: goalType
+          goalType: goalType,
+          dueDate: dueDate
         },
       ]);
     }
@@ -192,6 +189,7 @@ if (
 
     // Reset the selected software to an empty array
     setSelectedSoftware([]);
+    setDueDate(!dueDate );
    
 
     // set the days to false
@@ -218,8 +216,10 @@ if (
     // ...
   const selectedSoftwareOptions = todo.software.map((software) =>
   softwareOptions.find((option) => option.value === software)
+  
 );
 setSelectedSoftware(selectedSoftwareOptions);
+setDueDate(todo.dueDate);
       
 
   
@@ -239,11 +239,11 @@ setSelectedSoftware(selectedSoftwareOptions);
       return updatedTodos;
     });
   }
-  
-  function handleClearStorage() {
-    localStorage.clear();
-    setTodos([]);
+
+  function handleClearCompleted() {
+    setTodos(prevTodos => prevTodos.filter(todo => !todo.complete));
   }
+  
 
 
 return (
@@ -255,14 +255,7 @@ return (
 
 <div className="container-fluid">
 <div className="row mt-3">
-{/* ToDoList column */}
-<div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
-<ToDoList
-todos={todos}
-toggleTodo={handleToggleComplete}
-editTodo={handleEditTodoClick}
-/>
-</div>
+
 
 {/* Form column */}
 <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
@@ -347,6 +340,16 @@ Long-term Goal
     value={selectedSoftware}
     onChange={handleSelectedSoftwareChange}
   />
+
+{/* due date */}
+<div className="form-group">
+  <label htmlFor="dueDate">Due date:</label>
+  <input type="date" className="form-control" id="dueDate" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+</div>
+
+
+
+
 </div>
 <button
   type="button"
@@ -355,28 +358,40 @@ Long-term Goal
 >
   Add to do
 </button>
+
+
+
 </div>
+
+{/* Clear tasks that are completed */}
+<button
+  type="button"
+  className="btn btn-danger"
+  onClick={handleClearCompleted}
+>
+  Clear Completed
+</button>
+
 </div>
+
+{/* ToDoList column */}
+<div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+<ToDoList
+todos={todos}
+toggleTodo={handleToggleComplete}
+editTodo={handleEditTodoClick}
+/>
+</div>
+
 </div>
 
 
- {/* Clear storage */}
- <div className="d-flex justify-content-end">
-            <button
-              type="button"
-              className="btn btn-secondary mr-2"
-              onClick={handleClearStorage}
-            >
-              Clear complete
-            </button>
-            <div className="pt-2">
-              {todos.filter((todo) => !todo.complete).length} left to do
-            </div>
-            
-          </div>
         </div>
+        
 
       </div>
+
+      
       
    
 );

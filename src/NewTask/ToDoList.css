@@ -1,0 +1,21 @@
+.todo-list {
+    margin-top: 1rem;
+  }
+  
+  .big-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .form-check-label {
+    font-weight: 500;
+  }
+  
+  .bg-success {
+    background-color: green !important;
+  }
+  
+  .text-white {
+    color: #fff !important;
+  }
+  
