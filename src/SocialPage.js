@@ -1,6 +1,8 @@
 import React from "react";
 import NavBar from "./NavBar/NavBar";
 
+// import './SocialPage.css';
+
 
 function SocialPage() {
   return (

@@ -4,14 +4,42 @@ import Timer from "./Timer";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import RechartsLineChart from './RechartsLineChart';
 
-function TodayPage() {
-  //set selected task is the sate, and selected task is what changes
+
+
+
+
+function TodayPage({ todos, setTodos }) {
   const [selectedTask, setSelectedTask] = useState("");
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [],
+  });
+  
 
-  //changes value of selected task
   function handleTaskChange(event) {
     setSelectedTask(event.target.value);
+  }
+
+
+  function handleTimeLog(taskId, time) {
+    const newTodos = todos.map((task) => {
+      if (task.id === taskId) {
+        const timeLogged = task.timeLogged || [];
+        timeLogged.push({
+          date: new Date().toISOString(),
+          time: time,
+        });
+        return {
+          ...task,
+          timeLogged: timeLogged,
+        };
+      } else {
+        return task;
+      }
+    });
+    setTodos(newTodos);
   }
 
   return (
@@ -20,15 +48,12 @@ function TodayPage() {
       <Container className="my-5">
         <Row className="justify-content-center">
           <Col xs="12" md="6">
-
             <div className="bg-secondary rounded-3 p-3">
-              <Timer />
+              <Timer onTimeLog={handleTimeLog} />
             </div>
           </Col>
           <Col xs="12" md="6">
-          
             <div className="bg-dark rounded-3 p-3">
-           
               <p>Select a task:</p>
               <select
                 value={selectedTask}
@@ -36,17 +61,27 @@ function TodayPage() {
                 className="form-select"
               >
                 <option value="">--Select a task--</option>
-                <option value="task1">Task 1</option>
-                <option value="task2">Task 2</option>
-                <option value="task3">Task 3</option>
+                {todos.map((task) => (
+                  <option key={task.id} value={task.id}>
+                    {task.name}
+                  </option>
+                ))}
               </select>
             </div>
-            
-          </Col>
-        </Row>
-      </Container>
-    </div>
-  );
-}
+           
+              </Col>
+              </Row>
+              <Row className="justify-content-center">
+              <Col xs="12" md="8">
+              <div className="bg-light rounded-3 p-3 mt-3">
+              <RechartsLineChart />
 
-export default TodayPage;
+              </div>
+              </Col>
+              </Row>
+              </Container>
+              </div>
+              );
+              }
+
+              export default TodayPage;

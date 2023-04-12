@@ -39,7 +39,7 @@ function NewTask({todos, setTodos}) {
 
 const [selectedSoftware, setSelectedSoftware] = useState([]);
 
-const [dueDate, setDueDate] = useState(null);
+const [dueDate, setDueDate] = useState("");
 
 
 
@@ -189,7 +189,7 @@ if (
 
     // Reset the selected software to an empty array
     setSelectedSoftware([]);
-    setDueDate(!dueDate );
+    setDueDate("" );
    
 
     // set the days to false

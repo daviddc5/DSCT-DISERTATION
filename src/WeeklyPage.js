@@ -56,7 +56,12 @@ function WeeklyPage({ todos = [], setTodos }) {
                         }}
                       >
                         <p>{task.name}</p>
-                        {task.showDescription && <p>{task.description}</p>}
+                        {task.showDescription && (
+                          <>
+                            <p>{task.description}</p>
+                            <p>Due: {task.dueDate}</p>
+                          </>
+                        )}
                       </span>
                     </li>
                   ))}
