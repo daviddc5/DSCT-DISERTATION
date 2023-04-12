@@ -22,8 +22,8 @@ function AppRoutes() {
 
   // Dummy users data
   const users = [
-    { id: 1, name: 'Alice', icon: '/path/to/icon1.png', goal: 'Learn React' },
-    { id: 2, name: 'Bob', icon: '/path/to/icon2.png', goal: 'Learn Node.js' },
+    { id: 1, name: 'L', icon: '/path/to/icon1.png', goal: 'Learn React' },
+    { id: 2, name: 'Adrian', icon: '/path/to/icon2.png', goal: 'Learn Node.js' },
     // ...
   ];
 

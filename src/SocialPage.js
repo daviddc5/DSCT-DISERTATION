@@ -20,7 +20,19 @@ function getRandomSuggestion() {
   return offlineSuggestions[index];
 }
 
-function SocialPage({ users, currentUser }) {
+function SocialPage({ users, currentUser, task }) {
+  let taskAdvice = '';
+  switch (task) {
+    case 'Task 1':
+      taskAdvice = 'Advice for completing Task 1';
+      break;
+    case 'Task 2':
+      taskAdvice = 'Advice for completing Task 2';
+      break;
+    default:
+      taskAdvice = '';
+  }
+
   return (
     <>
       <Navbar />
@@ -44,10 +56,24 @@ function SocialPage({ users, currentUser }) {
             </Row>
           </Col>
           <Col md={6}>
-            <h2>Offline Interactions & Wellbeing Advice</h2>
+            <h2>Task Advice</h2>
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Task: {task}</Card.Title>
+                <Card.Text>{taskAdvice}</Card.Text>
+              </Card.Body>
+            </Card>
+            <h2>Wellbeing Advice</h2>
             <Card className="mb-4">
               <Card.Body>
                 <Card.Title>Wellbeing Advice</Card.Title>
+                <Card.Text>{getRandomSuggestion()}</Card.Text>
+              </Card.Body>
+            </Card>
+            <h2>Offline Interactions</h2>
+            <Card className="mb-4">
+              <Card.Body>
+                <Card.Title>Offline Interaction Recommendations</Card.Title>
                 <Card.Text>{getRandomSuggestion()}</Card.Text>
               </Card.Body>
             </Card>
