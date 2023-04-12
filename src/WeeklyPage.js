@@ -1,68 +1,36 @@
 import React from "react";
 import NavBar from "./NavBar/NavBar";
 
-function WeeklyPage() {
+function WeeklyPage({ todos = [] }) {
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  function getTasksForDay(day) {
+    return todos.filter((todo) => todo.days.includes(day));
+  }
+
   return (
     <div>
       <NavBar />
       <h1>Weekly Page</h1>
       <p>This is the Weekly page.</p>
-      <div>
-        <h2>Monday</h2>
-        <ul>
-          <li>Task 1</li>
-          <li>Task 2</li>
-          <li>Task 3</li>
-        </ul>
-      </div>
-      <div>
-        <h2>Tuesday</h2>
-        <ul>
-          <li>Task 1</li>
-          <li>Task 2</li>
-          <li>Task 3</li>
-        </ul>
-      </div>
-      <div>
-        <h2>Wednesday</h2>
-        <ul>
-          <li>Task 1</li>
-          <li>Task 2</li>
-          <li>Task 3</li>
-        </ul>
-      </div>
-      <div>
-        <h2>Thursday</h2>
-        <ul>
-          <li>Task 1</li>
-          <li>Task 2</li>
-          <li>Task 3</li>
-        </ul>
-      </div>
-      <div>
-        <h2>Friday</h2>
-        <ul>
-          <li>Task 1</li>
-          <li>Task 2</li>
-          <li>Task 3</li>
-        </ul>
-      </div>
-      <div>
-        <h2>Saturday</h2>
-        <ul>
-          <li>Task 1</li>
-          <li>Task 2</li>
-          <li>Task 3</li>
-        </ul>
-      </div>
-      <div>
-        <h2>Sunday</h2>
-        <ul>
-          <li>Task 1</li>
-          <li>Task 2</li>
-          <li>Task 3</li>
-        </ul>
-      </div>
+      {daysOfWeek.map((day) => (
+        <div key={day}>
+          <h2>{day}</h2>
+          <ul>
+            {getTasksForDay(day).map((task) => (
+              <li key={task.id}>{task.name}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 }

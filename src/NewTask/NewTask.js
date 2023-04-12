@@ -9,9 +9,12 @@ import Select from "react-select";
 import ToDoList from "./ToDoList";
 import NavBar from "../NavBar/NavBar";
 import softwareOptions from "./softwareOptions";
+// import weely page
+
 
 // Importing styles
 import "./NewTask.css";
+
 
 // Defining a variable for storing the todos
 const LOCAL_STORAGE_KEY = "todoApp.todos";
@@ -274,6 +277,9 @@ todos={todos}
 toggleTodo={handleToggleComplete}
 editTodo={handleEditTodoClick}
 />
+
+
+
 </div>
 
 {/* Form column */}

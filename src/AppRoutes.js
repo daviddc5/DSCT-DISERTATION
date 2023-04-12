@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import HomePage from './HomePage';
@@ -10,14 +10,16 @@ import NewTask from './NewTask/NewTask';
 import TodayPage from './TodayPage';
 
 function AppRoutes() {
+  const [todos, setTodos] = useState([]);
+
   return (
     <Routes>
       <Route path="/" element={<HomePage />} index={true} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/statistics" element={<StatisticsPage />} />
-      <Route path="/weekly" element={<WeeklyPage />} />
+      <Route path="/weekly" element={<WeeklyPage todos={todos} />} />
       <Route path="/social" element={<SocialPage />} />
-      <Route path="/newTask" element={<NewTask />} />
+      <Route path="/newTask" element={<NewTask todos={todos} setTodos={setTodos} />} />
       <Route path="/today" element={<TodayPage />} />
     </Routes>
   );
