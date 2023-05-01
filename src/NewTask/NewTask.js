@@ -17,6 +17,10 @@ function NewTask({todos, setTodos}) {
   // editingTodo state is used to keep track of which todo is being edited
   const [editingTodo, setEditingTodo] = useState(null);
 
+
+  const [filterMode, setFilterMode] = useState("active");
+
+
 // used to access the values of the input fields in the form at any given time
   const todoNameRef = useRef();
   const todoDescriptionRef = useRef();
@@ -53,6 +57,18 @@ function NewTask({todos, setTodos}) {
 const [selectedSoftware, setSelectedSoftware] = useState([]);
 
 const [dueDate, setDueDate] = useState("");
+
+function filteredTodos() {
+  return todos.filter((todo) => {
+    if (filterMode === "active") {
+      return todo.isActive;
+    } else if (filterMode === "archived") {
+      return !todo.isActive;
+    } else {
+      return true;
+    }
+  });
+}
 
 
 
@@ -146,7 +162,8 @@ function handleSelectedSoftwareChange(selectedOptions) {
               days:selectedDays,
               goalType: goalType,
               dueDate: dueDate,
-              archived: false
+             
+              isActive: true 
             };
           } else {
             return todo;
@@ -165,7 +182,8 @@ function handleSelectedSoftwareChange(selectedOptions) {
           software: software,
           days:selectedDays,
           goalType: goalType,
-          dueDate: dueDate
+          dueDate: dueDate,
+          isActive: true
         },
       ]);
     }
@@ -230,17 +248,18 @@ setDueDate(todo.dueDate);
     });
   }
 
-function handleClearCompleted() {
-  setTodos((prevTodos) =>
-    prevTodos.map((todo) => {
-      if (todo.complete) {
-        return { ...todo, archived: true }; // Set the 'archived' property to 'true' for completed todos
-      } else {
-        return todo;
-      }
-    })
-  );
-}
+  function handleClearCompleted() {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => {
+        if (todo.complete) {
+          return { ...todo, isActive: false };
+        } else {
+          return todo;
+        }
+      })
+    );
+  }
+  
 
   
 
@@ -371,19 +390,46 @@ Long-term Goal
 {/* ToDoList column */}
 <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
   {/* Clear tasks that are completed */}
-<button
-  type="button"
-  className="btn btn-danger"
-  onClick={handleClearCompleted}
->
-  Clear Completed
-</button>
-<ToDoList
+  <div className="row">
+  <div className="col-sm-12 col-md-6 col-lg-6">
+    <button
+      type="button"
+      className="btn btn-primary"
+      onClick={handleClearCompleted}
+    >
+      Archive selected tasks
+    </button>
+  </div>
+  <div className="col-sm-12 col-md-6 col-lg-6">
+    <label htmlFor="filterMode"> Select to show all or archived tasks:</label>
+    <select
+      className="form-control"
+      id="filterMode"
+      value={filterMode}
+      onChange={(e) => setFilterMode(e.target.value)}
+    >
+      <option value="active">Show Active Tasks</option>
+      <option value="archived">Show Archived Tasks</option>
+    </select>
+  </div>
+</div>
+
+{/* <ToDoList
 todos={todos}
 toggleTodo={handleToggleComplete}
 editTodo={handleEditTodoClick}
+/> */}
+<ToDoList
+  todos={filteredTodos()}
+  toggleTodo={handleToggleComplete}
+  editTodo={handleEditTodoClick}
 />
+
+
+
 </div>
+
+
 
 </div>
 

@@ -7,22 +7,29 @@ import Col from 'react-bootstrap/Col';
 import RechartsLineChart from './RechartsLineChart';
 import moment from 'moment';
 
-
-
-function TodayPage({ todos = [], setTodos }) {
+function TodayPage({ todos = [], setTodos, timerSettings}) {
   const [selectedTask, setSelectedTask] = useState("");
   const [hoursWorked, setHoursWorked] = useState(0);
   const [chartData, setChartData] = useState([]);
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("week");
   const [filteredChartData, setFilteredChartData] = useState([]);
 
+  const [selectedTaskForStats, setSelectedTaskForStats] = useState(""); // Add this line
+  
+ 
+
+
+  function handleTaskChangeForStats(event) {
+    setSelectedTaskForStats(event.target.value); // Add this function
+  }
+
   const filterChartData = useCallback(() => {
-    if (!selectedTask) {
+    if (!selectedTaskForStats) { // Change this line
       setFilteredChartData([]);
       return;
     }
 
-    const task = todos.find((task) => task.id === selectedTask);
+    const task = todos.find((task) => task.id === selectedTaskForStats); // Change this line
     const taskTimeLogged = task.timeLogged || [];
 
     const today = moment();
@@ -54,24 +61,52 @@ function TodayPage({ todos = [], setTodos }) {
   }
 
   function handleHoursChange(event) {
-    setHoursWorked(Number(event.target.value));
+    const hours = Number(event.target.value);
+    if (hours >= 0 && hours <= 24) {
+      setHoursWorked(hours);
+    }
   }
+  
 
   function handleTimeLog(taskId, time) {
     const task = todos.find((task) => task.id === taskId);
+  
+    // Add this check to ensure that the task is defined
+    if (!task) {
+      console.error('Task not found:', taskId);
+      return;
+    }
+  
     const currentDate = moment().format("YYYY-MM-DD");
-    const newTimeLogged = {
-      date: currentDate,
-      time: time,
-      taskName: task.name,
-    };
+    const timeLogged = task.timeLogged || [];
+  
+    // Check if there is already a data entry for the selected task on the current date
+    const existingTimeLog = timeLogged.find((log) => log.date === currentDate);
+  
+    if (existingTimeLog) {
+      // Add the new time to the existing time
+      const newTime = existingTimeLog.time + time;
+      if (newTime <= 24) {
+        existingTimeLog.time = newTime;
+      } else {
+        alert('Cannot log more than 24 hours a day');
+        return;
+      }
+    } else {
+      // Add a new data entry for the selected task on the current date
+      const newTimeLogged = {
+        date: currentDate,
+        time: time,
+        taskName: task.name,
+      };
+      timeLogged.push(newTimeLogged);
+    }
+  
     const newTodos = todos.map((task) => {
       if (task.id === taskId) {
-        const timeLogged = task.timeLogged || [];
-        timeLogged.push(newTimeLogged);
         return {
           ...task,
-          timeLogged: timeLogged.concat(newTimeLogged),
+          timeLogged: timeLogged,
         };
       } else {
         return task;
@@ -79,6 +114,8 @@ function TodayPage({ todos = [], setTodos }) {
     });
     setTodos(newTodos);
   }
+  
+  
 
   function handleHoursSubmit(event) {
     event.preventDefault();
@@ -86,6 +123,11 @@ function TodayPage({ todos = [], setTodos }) {
       alert("Please select a task");
       return;
     }
+    if (hoursWorked > 24) {
+      alert("Cannot log more than 24 hours a day");
+      return;
+    }
+    
     handleTimeLog(selectedTask, hoursWorked);
     const task = todos.find((task) => task.id === selectedTask);
     const currentDate = moment().format("YYYY-MM-DD");
@@ -98,7 +140,21 @@ function TodayPage({ todos = [], setTodos }) {
     setHoursWorked(0);
   }
 
-
+  function handleClearHours(taskId) {
+    const newTodos = todos.map((task) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          timeLogged: [],
+        };
+      } else {
+        return task;
+      }
+    });
+    setTodos(newTodos);
+  }
+  
+  
 
   return (
     <div>
@@ -107,7 +163,31 @@ function TodayPage({ todos = [], setTodos }) {
         <Row className="justify-content-center">
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
-              <Timer onTimeLog={(time) => handleTimeLog(selectedTask, time)} />
+              {/* <Timer onTimeLog={(time) => handleTimeLog(selectedTask, time)} /> */}
+              <Timer
+  onTimeLog={(time) => handleTimeLog(selectedTask, time)}
+  workTime={timerSettings.workTime}
+  shortBreakTime={timerSettings.shortBreakTime}
+  longBreakTime={timerSettings.longBreakTime}
+/>
+
+{/* Add a new select element for the statistics */}
+        <div className="mt-3">
+          <p>Select a task for statistics:</p>
+          <select
+            value={selectedTaskForStats}
+            onChange={handleTaskChangeForStats}
+            className="form-select"
+          >
+            <option value="">--Select a task--</option>
+            {todos.map((task) => (
+              <option key={task.id} value={task.id}>
+                {task.name}
+              </option>
+            ))}
+          </select>
+        </div>
+              
             </div>
           </Col>
           <Col xs="12" md="6">
@@ -145,21 +225,23 @@ function TodayPage({ todos = [], setTodos }) {
         </Row>
   
         <div>
-          <button
-            onClick={() =>
-              setSelectedTimeFrame(
-                selectedTimeFrame === "week" ? "month" : "week"
-              )
-            }
-          >
-            Show {selectedTimeFrame === "week" ? "month" : "week"}
-          </button>
-          {filteredChartData.length > 0 ? (
-            <RechartsLineChart chartData={chartData} />
-          ) : (
-            <p>No data to display</p>
-          )}
-        </div>
+        <button onClick={() => handleClearHours(selectedTask)}>Clear Hours Worked</button>
+
+
+
+  <button
+    onClick={() =>
+      setSelectedTimeFrame(
+        selectedTimeFrame === "week" ? "month" : "week"
+      )
+    }
+  >
+    Show {selectedTimeFrame === "week" ? "month" : "week"}
+  </button>
+  {/* Always render the RechartsLineChart component */}
+  <RechartsLineChart chartData={filteredChartData} />
+</div>
+
       </Container>
     </div>
   )};

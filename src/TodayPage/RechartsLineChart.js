@@ -1,53 +1,26 @@
+// RechartsLineChart.js
+
 import React from 'react';
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
-
-
-function RechartsLineChart({ chartData }) {
-  // Generate unique tasks from the chartData
-  const uniqueTasks = Array.from(
-    new Set(chartData.map((data) => data.taskName))
-  );
-
-  // Aggregate data by date
-  const dataByDate = chartData.reduce((acc, data) => {
-    const existingData = acc.find((d) => d.date === data.date);
-    if (existingData) {
-      existingData[data.taskName] = (existingData[data.taskName] || 0) + data.hours;
-    } else {
-      acc.push({ date: data.date, [data.taskName]: data.hours });
-    }
-    return acc;
-  }, []);
-
-
+const RechartsLineChart = ({ chartData }) => {
 
   return (
-    <LineChart width={600} height={300} data={dataByDate}>
-      <CartesianGrid stroke="#f5f5f5" />
+    <LineChart width={600} height={300} data={chartData}>
       <XAxis dataKey="date" />
       <YAxis />
       <Tooltip />
       <Legend />
-
-      {uniqueTasks.map((task, index) => (
-        <Line
-          key={task}
-          type="monotone"
-          dataKey={task}
-          stroke={index % 2 === 0 ? '#007bff' : '#dc3545'}
-        />
-      ))}
+      <CartesianGrid stroke="#f5f5f5" />
+      <Line
+        key="taskHours" // Add a unique key prop here
+        type="monotone"
+        dataKey="hours"
+        stroke="#8884d8"
+        activeDot={{ r: 8 }}
+      />
     </LineChart>
   );
-}
+};
 
 export default RechartsLineChart;
