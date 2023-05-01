@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import NavBar from "./NavBar/NavBar";
-import Timer from "./TodayPage/Timer";
+
 
 function SettingsPage({ onSettingsChange }) {
   const [workTime, setWorkTime] = useState(25);

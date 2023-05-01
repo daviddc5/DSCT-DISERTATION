@@ -47,9 +47,11 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
         onTimeLog(isLongBreak ? longBreakTime : shortBreakTime);
       }
     }
-
+  
     return () => clearInterval(interval);
-  }, [isActive, seconds, isBreak, isLongBreak, onTimeLog]);
+  }, [isActive, seconds, isBreak, isLongBreak, onTimeLog, longBreakTime, shortBreakTime]);
+  
+
 
   const minutes = Math.floor(seconds / 60);
   const displaySeconds =

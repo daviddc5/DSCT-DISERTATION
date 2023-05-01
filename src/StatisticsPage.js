@@ -6,11 +6,11 @@ import Col from "react-bootstrap/Col";
 import moment from "moment";
 import RechartsLineChart from "./TodayPage/RechartsLineChart";
 
-function StatisticsPage({ todos = [], setTodos }) {
+function StatisticsPage({ todos = [], setTodos, chartData}) {
   const [selectedTaskForStats, setSelectedTaskForStats] = useState("");
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("week");
   const [filteredChartData, setFilteredChartData] = useState([]);
-  const [chartData, setChartData] = useState([]);
+  const [setChartData] = useState([]);
 
   function handleTaskChangeForStats(event) {
     setSelectedTaskForStats(event.target.value);
@@ -46,7 +46,7 @@ function StatisticsPage({ todos = [], setTodos }) {
 
   useEffect(() => {
     filterChartData();
-  }, [selectedTaskForStats, selectedTimeFrame]);
+  }, [selectedTaskForStats, selectedTimeFrame, filterChartData]);
 
   function handleProgressLog(taskId, progress) {
     const task = todos.find((task) => task.id === taskId);

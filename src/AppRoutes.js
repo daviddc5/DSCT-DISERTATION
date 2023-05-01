@@ -15,6 +15,8 @@ function AppRoutes() {
     return storedTodos ? JSON.parse(storedTodos) : [];
   });
 
+  const [chartData, setChartData] = useState([]);
+
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
@@ -47,7 +49,8 @@ function AppRoutes() {
         path="/settings"
         element={<SettingsPage onSettingsChange={handleSettingsChange} />}
       />
-      <Route path="/statistics" element={<StatisticsPage todos={todos} setTodos={setTodos} />} />
+      <Route path="/statistics" element={<StatisticsPage todos={todos} setTodos={setTodos} chartData={chartData}
+    setChartData={setChartData}/>} />
 
       <Route
         path="/weekly"
@@ -61,7 +64,8 @@ function AppRoutes() {
       <Route
         path="/today"
         element={
-          <TodayPage todos={todos} setTodos={setTodos} timerSettings={timerSettings} />
+          <TodayPage todos={todos} setTodos={setTodos} timerSettings={timerSettings} chartData={chartData}
+          setChartData={setChartData} />
         }
       />
     </Routes>
