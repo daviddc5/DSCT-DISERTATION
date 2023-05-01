@@ -8,7 +8,7 @@ import StatisticsPage from './StatisticsPage';
 import WeeklyPage from './WeeklyPage';
 import SocialPage from './SocialPage';
 import NewTask from './NewTask/NewTask';
-import TodayPage from './TodayPage';
+import TodayPage from './TodayPage/TodayPage';
 
 function AppRoutes() {
   const [todos, setTodos] = useState(() => {

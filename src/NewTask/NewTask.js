@@ -1,5 +1,5 @@
 // Importing React and hooks
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef} from "react";
 
 // Importing external libraries
 import { v4 as uuidv4 } from "uuid";
@@ -32,6 +32,19 @@ function NewTask({todos, setTodos}) {
     { name: "Saturday", checked: false },
   ]);
 
+  const [selectedDays, setSelectedDays] = useState([]);
+
+  const initialDaysState = [
+    { name: "Sunday", checked: false },
+    { name: "Monday", checked: false },
+    { name: "Tuesday", checked: false },
+    { name: "Wednesday", checked: false },
+    { name: "Thursday", checked: false },
+    { name: "Friday", checked: false },
+    { name: "Saturday", checked: false },
+  ];
+  
+ 
 //Add a new state variable to store the selected goal type.
  const [goalType, setGoalType] = useState(null);
 
@@ -57,114 +70,91 @@ function handleSelectedSoftwareChange(selectedOptions) {
   }
     
 
+  // function handleDaysChange(selectedOptions) {
+  //   const selectedDayNames = selectedOptions.map(option => option.value);
+  //   setDays(prevDays => {
+  //     return prevDays.map(day => {
+  //       return {
+  //         ...day,
+  //         checked: selectedDayNames.includes(day.name)
+  //       };
+  //     });
+  //   });
+  // }
+
   function handleDaysChange(selectedOptions) {
     const selectedDayNames = selectedOptions.map(option => option.value);
-    setDays(prevDays => {
-      return prevDays.map(day => {
-        return {
-          ...day,
-          checked: selectedDayNames.includes(day.name)
-        };
-      });
-    });
+    setSelectedDays(selectedDayNames);
   }
+  
   
 
 
 
 
 
- // 1. useEffect hook that runs when the editingTodo state changes.
-useEffect(() => {
-  // 2. Check if a todo is being edited (editingTodo is not null).
-  if (editingTodo) {
-    // 3. Create a new array of updated days based on the editingTodo.days array.
-    const updatedDays = days.map((day) => {
-      return {
-        ...day,
-        // 4. Set the 'checked' property of each day based on whether the day is included in the editingTodo.days array.
-        checked: editingTodo.days.includes(day.name),
-      };
-    });
-    // 5. Update the 'days' state with the new array of updated days.
-    setDays(updatedDays);
-  } else {
-    // 6. If no todo is being edited (editingTodo is null), reset the 'checked' property of each day to 'false'.
-    const resetDays = days.map((day) => ({ ...day, checked: false }));
-    // 7. Update the 'days' state with the new array of reset days.
-    setDays(resetDays);
-  }
-  // 8. Add editingTodo to the dependency array of the useEffect hook to ensure the hook runs when the editingTodo state changes.
-}, [editingTodo]);
-
-
+//  // 1. useEffect hook that runs when the editingTodo state changes.
+// useEffect(() => {
+//   // 2. Check if a todo is being edited (editingTodo is not null).
+//   if (editingTodo) {
+//     // 3. Create a new array of updated days based on the editingTodo.days array.
+//     const updatedDays = days.map((day) => {
+//       return {
+//         ...day,
+//         // 4. Set the 'checked' property of each day based on whether the day is included in the editingTodo.days array.
+//         checked: editingTodo.days.includes(day.name),
+//       };
+//     });
+//     // 5. Update the 'days' state with the new array of updated days.
+//     setDays(updatedDays);
+//   } else {
+//     // 6. If no todo is being edited (editingTodo is null), reset the 'checked' property of each day to 'false'.
+//     const resetDays = days.map((day) => ({ ...day, checked: false }));
+//     // 7. Update the 'days' state with the new array of reset days.
+//     setDays(resetDays);
+//   }
+//   // 8. Add editingTodo to the dependency array of the useEffect hook to ensure the hook runs when the editingTodo state changes.
+// }, [editingTodo]);
 
 
   // This is a function that handles the addition of a new todo item.
   function handleAddTodo() { 
     const name = todoNameRef.current.value;
     const description = todoDescriptionRef.current.value;
-// array of selected day names
-
-      const selectedDays = days
-
-      .filter((day) => day.checked)
-      .map((day) => day.name);
-      console.log(selectedDays)
-
-    const software = selectedSoftware.map((option) => option.value)
-
-
-      
-// If any field is empty or not selected, the function returns without doing anything.
-if (
-  name === "" ||
-  description === "" ||
-  selectedDays.length === 0 ||
-  goalType === null ||
-  selectedSoftware.length === 0 ||
-  !dueDate // assuming dueDate is a variable that stores the entered due date
-) {
-  return;
-}
-
-
-// Set the checked property of each day object to false
-      const resetDays = days.map((day) => ({ ...day, checked: false }));
-
-    
-
-    // If editingTodo is not null, this means that an existing todo is being edited. 
-    // The function updates the todo by mapping through the previous todos and replacing the todo with the matching editingTodo ID with an updated version 
+    const software = selectedSoftware.map((option) => option.value);
+  
+    if (
+      name === "" ||
+      description === "" ||
+      selectedDays.length === 0 ||
+      goalType === null ||
+      selectedSoftware.length === 0 ||
+      !dueDate
+    ) {
+      return;
+    }
+  
     if (editingTodo) {
-        // array of selected day names
-       
       setTodos((prevTodos) =>
         prevTodos.map((todo) => {
           if (todo.id === editingTodo.id) {
             return { 
               ...todo, 
-             
               name: name, 
               description: description, 
               software: software,
               days:selectedDays,
               goalType: goalType,
-              dueDate: dueDate
-
-              
+              dueDate: dueDate,
+              archived: false
             };
           } else {
             return todo;
           }
         })
       );
-      // After updating the todos, the function sets editingTodo to null to indicate that no todo is being edited.
       setEditingTodo(null);
-    } 
-    // If not editing an existing todo, create a new todo object and add it to the todos state with default values for additional properties
-
-    else {
+    } else {
       setTodos((prevTodos) => [
         ...prevTodos,
         { 
@@ -179,27 +169,27 @@ if (
         },
       ]);
     }
+  
     todoNameRef.current.value = null;
     todoDescriptionRef.current.value = null;
-   
-    //Resetting the checkbox inputs to unchecked after adding a todo, using forEach on the todoDaysRefs array.
-
-    setDays(resetDays);
+    setDays(initialDaysState);
     setGoalType(null);
-
-    // Reset the selected software to an empty array
     setSelectedSoftware([]);
-    setDueDate("" );
-   
-
-    // set the days to false
+    setDueDate("");
+    setSelectedDays([]);
   }
+  
+
+
   
 // changes the values of a selected todo
   function handleEditTodoClick(todo) {
     setEditingTodo(todo);
     todoNameRef.current.value = todo.name;
     todoDescriptionRef.current.value = todo.description;
+
+    setSelectedDays(todo.days);
+
     
     setGoalType(todo.goalType);
 
@@ -240,9 +230,18 @@ setDueDate(todo.dueDate);
     });
   }
 
-  function handleClearCompleted() {
-    setTodos(prevTodos => prevTodos.filter(todo => !todo.complete));
-  }
+function handleClearCompleted() {
+  setTodos((prevTodos) =>
+    prevTodos.map((todo) => {
+      if (todo.complete) {
+        return { ...todo, archived: true }; // Set the 'archived' property to 'true' for completed todos
+      } else {
+        return todo;
+      }
+    })
+  );
+}
+
   
 
 
@@ -262,6 +261,9 @@ return (
 <div className="form-container">
 {/* Form content */}
 
+
+
+
 {/*  Name reference */}
 <label htmlFor="todoName">Name of the Goal</label>
 <input
@@ -270,7 +272,6 @@ className="form-control"
 placeholder="Name of the Goal"
 ref={todoNameRef}
 />
-{/*  Description reference */}
 <label htmlFor="todoDescription">Add a description for the todo</label>
 <input
 type="text"
@@ -290,7 +291,8 @@ className="basic-multi-select"
 classNamePrefix="select"
 id="days"
 options={days.map(day => ({ value: day.name, label: day.name }))}
-value={days.filter(day => day.checked).map(day => ({ value: day.name, label: day.name }))}
+value={selectedDays.map(day => ({ value: day, label: day }))}
+
 onChange={handleDaysChange}
 />
 </div>
@@ -363,7 +365,12 @@ Long-term Goal
 
 </div>
 
-{/* Clear tasks that are completed */}
+
+</div>
+
+{/* ToDoList column */}
+<div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
+  {/* Clear tasks that are completed */}
 <button
   type="button"
   className="btn btn-danger"
@@ -371,11 +378,6 @@ Long-term Goal
 >
   Clear Completed
 </button>
-
-</div>
-
-{/* ToDoList column */}
-<div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
 <ToDoList
 todos={todos}
 toggleTodo={handleToggleComplete}
@@ -390,9 +392,7 @@ editTodo={handleEditTodoClick}
         
 
       </div>
-
-      
-      
+  
    
 );
 
