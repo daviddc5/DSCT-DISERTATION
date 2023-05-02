@@ -10,15 +10,12 @@ import RechartsLineChart from "./RechartsLineChart";
 
 
 function TodayPage({ todos = [], setTodos, timerSettings, chartData, setChartData }) {
-
-
   const [selectedTask, setSelectedTask] = useState("");
   const [hoursWorked, setHoursWorked] = useState(0);
-
   const [selectedTaskForStats, setSelectedTaskForStats] = useState("");
-const [filteredChartData, setFilteredChartData] = useState([]);
+  const [filteredChartData, setFilteredChartData] = useState([]);
+  const [timeRange, setTimeRange] = useState("month");
 
-const [timeRange, setTimeRange] = useState("month");
 
 
 const filterChartData = useCallback(() => {
@@ -40,11 +37,17 @@ const filterChartData = useCallback(() => {
       date: log.date,
       time: log.time,
     }));
-
   setFilteredChartData(filteredData);
   console.log('Filtered chart data:', filteredData);
 }, [selectedTaskForStats, todos, timeRange]);
 
+
+useEffect(() => {
+  const storedChartData = localStorage.getItem("chartData");
+  if (storedChartData) {
+    setChartData(JSON.parse(storedChartData));
+  }
+}, [setChartData]);
 
 
 useEffect(() => {
@@ -52,29 +55,40 @@ useEffect(() => {
 }, [selectedTaskForStats, filterChartData]);
 
 
-
-
+ 
 
 
 function handleTimeRangeToggle() {
   setTimeRange(timeRange === "month" ? "week" : "month");
 }
 
-
 function handleClearData() {
   setFilteredChartData([]);
 }
-
-
 
 function handleTaskChangeForStats(event) {
   setSelectedTaskForStats(event.target.value);
 }
 
+function handleTaskChange(event) {
+  setSelectedTask(event.target.value);
 
-  function handleTaskChange(event) {
-    setSelectedTask(event.target.value);
-  }
+  // Filter tasks for the current day and are active
+  const currentDay = moment().format("dddd");
+  const tasksForDay = todos.filter(
+    (task) => task.days.includes(currentDay) && task.isActive
+  );
+
+  // Get the selected task
+  const task = tasksForDay.find((task) => task.id === event.target.value);
+
+  // Set the selected task for stats
+  setSelectedTaskForStats(task ? task.id : "");
+}
+
+
+
+
 
   function handleHoursChange(event) {
     const hours = Number(event.target.value);
@@ -131,8 +145,6 @@ function handleTaskChangeForStats(event) {
 
     setTodos(newTodos);
    
-  
-
     const newChartDataItem = {
       taskName: task.name,
       date: currentDate,
@@ -140,7 +152,8 @@ function handleTaskChangeForStats(event) {
     };
 
     setChartData([...chartData, newChartDataItem]);
-    console.log('Updated chart data:', [...chartData, newChartDataItem]);
+    localStorage.setItem("chartData", JSON.stringify([...chartData, newChartDataItem]));
+    
    
     setHoursWorked(0);
   }
@@ -152,8 +165,9 @@ function handleTaskChangeForStats(event) {
         <Row className="justify-content-center">
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
+
             <Timer
-  onTimeLog={(time) => handleHoursSubmit(time)}
+  
   workTime={timerSettings.workTime}
   shortBreakTime={timerSettings.shortBreakTime}
   longBreakTime={timerSettings.longBreakTime}
@@ -232,9 +246,6 @@ function handleTaskChangeForStats(event) {
 </Row>
 
 </Row>
-
-
-
       </Container>
     </div>
   );

@@ -14,9 +14,12 @@ function WeeklyPage({ todos = [], setTodos }) {
   ];
 
   function getTasksForDay(day) {
-    return todos.filter((todo) => todo.days.includes(day));
+    return todos.filter((todo) => {
+      return todo.days.includes(day) && todo.isActive;
+    });
   }
-
+  
+  
   return (
     <div>
       <NavBar />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Timer.css";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -7,11 +7,13 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+
 function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
   const [seconds, setSeconds] = useState(workTime * 60);
   const [isActive, setIsActive] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [isLongBreak, setIsLongBreak] = useState(false);
+  
 
   function toggle() {
     setIsActive(!isActive);
@@ -35,8 +37,23 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
     reset();
   }
 
+
+  const audio = useMemo(() => new Audio("./TodayPage/Notification.mp3"), []);
+
+useEffect(() => {
+  return () => {
+    audio.pause();
+  };
+}, [audio]);
+
+
   useEffect(() => {
     let interval = null;
+    
+    const handleAudioPlay = () => {
+      audio.play();
+    };
+    
     if (isActive && seconds > 0) {
       interval = setInterval(() => {
         setSeconds((seconds) => seconds - 1);
@@ -45,13 +62,14 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
       setIsActive(false);
       if (isBreak) {
         onTimeLog(isLongBreak ? longBreakTime : shortBreakTime);
+        handleAudioPlay();
+      } else {
+        handleAudioPlay();
       }
     }
-  
     return () => clearInterval(interval);
-  }, [isActive, seconds, isBreak, isLongBreak, onTimeLog, longBreakTime, shortBreakTime]);
+  }, [  isActive,  seconds,  isBreak,  isLongBreak,  onTimeLog,  longBreakTime,  shortBreakTime,  audio]);
   
-
 
   const minutes = Math.floor(seconds / 60);
   const displaySeconds =
@@ -84,6 +102,7 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
                   variant={isBreak ? "danger rounded-3" : "success rounded-3"}
                   onClick={toggleMode}
                   size="lg"
+                  disabled={isActive}
                 >
                   {isBreak ? "Work" : "Break"}
                 </Button>
@@ -96,6 +115,7 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
                         setSeconds(longBreakTime * 60);
                       }}
                       size="lg"
+                      disabled={isActive}
                     >
                       Long Break
                     </Button>
@@ -106,6 +126,7 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
                         setSeconds(shortBreakTime * 60);
                       }}
                       size="lg"
+                      disabled={isActive}
                     >
                       Short Break
                     </Button>
@@ -116,7 +137,6 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
           </Col>
         </Row>
       </Container>
-    )};
-    
-    export default Timer;
-    
+    );
+                    }
+                    export default Timer;    

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-
 import HomePage from "./HomePage";
 import SettingsPage from "./SettingsPage";
 import StatisticsPage from "./StatisticsPage";
@@ -49,9 +48,10 @@ function AppRoutes() {
         path="/settings"
         element={<SettingsPage onSettingsChange={handleSettingsChange} />}
       />
-      <Route path="/statistics" element={<StatisticsPage todos={todos} setTodos={setTodos} chartData={chartData}
-    setChartData={setChartData}/>} />
-
+      <Route
+        path="/statistics"
+        element={<StatisticsPage todos={todos} setTodos={setTodos} chartData={chartData} setChartData={setChartData} />}
+      />
       <Route
         path="/weekly"
         element={<WeeklyPage todos={todos} setTodos={setTodos} />}
@@ -64,8 +64,13 @@ function AppRoutes() {
       <Route
         path="/today"
         element={
-          <TodayPage todos={todos} setTodos={setTodos} timerSettings={timerSettings} chartData={chartData}
-          setChartData={setChartData} />
+          <TodayPage
+            todos={todos}
+            setTodos={setTodos}
+            timerSettings={timerSettings}
+            chartData={chartData}
+            setChartData={setChartData}
+          />
         }
       />
     </Routes>
