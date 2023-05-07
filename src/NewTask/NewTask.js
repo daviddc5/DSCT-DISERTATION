@@ -14,16 +14,16 @@ import softwareOptions from "./softwareOptions";
 import "./NewTask.css";
 
 function NewTask({todos, setTodos}) {
-  // editingTodo state is used to keep track of which todo is being edited
   const [editingTodo, setEditingTodo] = useState(null);
-
-
-  const [filterMode, setFilterMode] = useState("active");
-
-
-// used to access the values of the input fields in the form at any given time
+  // use refs for todos
   const todoNameRef = useRef();
   const todoDescriptionRef = useRef();
+  //use state
+  const [goalType, setGoalType] = useState(null);
+  const [selectedSoftware, setSelectedSoftware] = useState([]);
+  const [dueDate, setDueDate] = useState("");
+  const [filterMode, setFilterMode] = useState("active");
+  const [selectedDays, setSelectedDays] = useState([]);
 
   // 1. Update your state to include an array of day objects:
   const [days, setDays] = useState([
@@ -35,9 +35,6 @@ function NewTask({todos, setTodos}) {
     { name: "Friday", checked: false },
     { name: "Saturday", checked: false },
   ]);
-
-  const [selectedDays, setSelectedDays] = useState([]);
-
   const initialDaysState = [
     { name: "Sunday", checked: false },
     { name: "Monday", checked: false },
@@ -48,91 +45,6 @@ function NewTask({todos, setTodos}) {
     { name: "Saturday", checked: false },
   ];
   
- 
-//Add a new state variable to store the selected goal type.
- const [goalType, setGoalType] = useState(null);
-
-// new state variable for the selected software:
-
-const [selectedSoftware, setSelectedSoftware] = useState([]);
-
-const [dueDate, setDueDate] = useState("");
-
-function filteredTodos() {
-  return todos.filter((todo) => {
-    if (filterMode === "active") {
-      return todo.isActive;
-    } else if (filterMode === "archived") {
-      return !todo.isActive;
-    } else {
-      return true;
-    }
-  });
-}
-
-
-
-
-//function to handle the change in the selected software
-
-function handleSelectedSoftwareChange(selectedOptions) {
-  setSelectedSoftware(selectedOptions);
-}
-
-
-// handle the change of the goal type.
-  function handleGoalTypeChange(e) {
-    setGoalType(e.target.value);
-  }
-    
-
-  // function handleDaysChange(selectedOptions) {
-  //   const selectedDayNames = selectedOptions.map(option => option.value);
-  //   setDays(prevDays => {
-  //     return prevDays.map(day => {
-  //       return {
-  //         ...day,
-  //         checked: selectedDayNames.includes(day.name)
-  //       };
-  //     });
-  //   });
-  // }
-
-  function handleDaysChange(selectedOptions) {
-    const selectedDayNames = selectedOptions.map(option => option.value);
-    setSelectedDays(selectedDayNames);
-  }
-  
-  
-
-
-
-
-
-//  // 1. useEffect hook that runs when the editingTodo state changes.
-// useEffect(() => {
-//   // 2. Check if a todo is being edited (editingTodo is not null).
-//   if (editingTodo) {
-//     // 3. Create a new array of updated days based on the editingTodo.days array.
-//     const updatedDays = days.map((day) => {
-//       return {
-//         ...day,
-//         // 4. Set the 'checked' property of each day based on whether the day is included in the editingTodo.days array.
-//         checked: editingTodo.days.includes(day.name),
-//       };
-//     });
-//     // 5. Update the 'days' state with the new array of updated days.
-//     setDays(updatedDays);
-//   } else {
-//     // 6. If no todo is being edited (editingTodo is null), reset the 'checked' property of each day to 'false'.
-//     const resetDays = days.map((day) => ({ ...day, checked: false }));
-//     // 7. Update the 'days' state with the new array of reset days.
-//     setDays(resetDays);
-//   }
-//   // 8. Add editingTodo to the dependency array of the useEffect hook to ensure the hook runs when the editingTodo state changes.
-// }, [editingTodo]);
-
-
   // This is a function that handles the addition of a new todo item.
   function handleAddTodo() { 
     const name = todoNameRef.current.value;
@@ -163,7 +75,7 @@ function handleSelectedSoftwareChange(selectedOptions) {
               goalType: goalType,
               dueDate: dueDate,
              
-              isActive: true 
+            
             };
           } else {
             return todo;
@@ -178,12 +90,13 @@ function handleSelectedSoftwareChange(selectedOptions) {
           id: uuidv4(),
           name: name, 
           description: description, 
-          complete: false,
           software: software,
           days:selectedDays,
           goalType: goalType,
           dueDate: dueDate,
-          isActive: true
+          isActive: true,
+          checked: false,
+          finished:false
         },
       ]);
     }
@@ -200,15 +113,13 @@ function handleSelectedSoftwareChange(selectedOptions) {
 
 
   
-// changes the values of a selected todo
+// changes/edits to dos
   function handleEditTodoClick(todo) {
     setEditingTodo(todo);
     todoNameRef.current.value = todo.name;
     todoDescriptionRef.current.value = todo.description;
 
     setSelectedDays(todo.days);
-
-    
     setGoalType(todo.goalType);
 
       // Update the 'days' state based on the editingTodo.days array
@@ -220,7 +131,6 @@ function handleSelectedSoftwareChange(selectedOptions) {
       };
       });
       });
-
     // ...
   const selectedSoftwareOptions = todo.software.map((software) =>
   softwareOptions.find((option) => option.value === software)
@@ -228,19 +138,34 @@ function handleSelectedSoftwareChange(selectedOptions) {
 );
 setSelectedSoftware(selectedSoftwareOptions);
 setDueDate(todo.dueDate);
-      
-
+    
   
   }
 
+    //functions setters for the todos
+
+function handleSelectedSoftwareChange(selectedOptions) {
+  setSelectedSoftware(selectedOptions);
+}
 
 
-// loops through todos, checks for todos with given id parameter and changes its status to complete, ironically by negating the complete status
-  function handleToggleComplete(id) {
+// handle the change of the goal type.
+  function handleGoalTypeChange(e) {
+    setGoalType(e.target.value);
+  }
+    
+
+
+  function handleDaysChange(selectedOptions) {
+    const selectedDayNames = selectedOptions.map(option => option.value);
+    setSelectedDays(selectedDayNames);
+  }
+// sets tasks as complete or incomplete, maybe I have to change
+  function handleToggleChecked(id) {
     setTodos((prevTodos) => {
       const updatedTodos = prevTodos.map((todo) => {
         if (todo.id === id) {
-          return { ...todo, complete: !todo.complete };
+          return { ...todo, checked: !todo.checked };
         }
         return todo;
       });
@@ -248,21 +173,61 @@ setDueDate(todo.dueDate);
     });
   }
 
-  function handleClearCompleted() {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        if (todo.complete) {
-          return { ...todo, isActive: false };
-        } else {
-          return todo;
+  // New function for handling 'finished' state
+  function handleToggleFinished(id) {
+    setTodos((prevTodos) => {
+      const updatedTodos = prevTodos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, finished: !todo.finished };
         }
-      })
-    );
+        return todo;
+      });
+      return updatedTodos;
+    });
   }
+
+
+//filtering and setting todos
   
+function filteredTodos() {
+  return todos.filter((todo) => {
+    if (filterMode === "active") {
+      return todo.isActive && !todo.finished;
+    } else if (filterMode === "archived") {
+      return !todo.isActive && !todo.finished;
+    } else {
+      return true;
+    }
+  });
+}
+
+
+function handleSetToArchive() {
+  setTodos((prevTodos) =>
+    prevTodos.map((todo) => {
+      if (todo.checked) {
+        return { ...todo, isActive: false, checked: false }; // Set checked to false when archiving
+      } else {
+        return todo;
+      }
+    })
+  );
+}
+
+function handleSetToActive() {
+  setTodos((prevTodos) =>
+    prevTodos.map((todo) => {
+      if (todo.checked) {
+        return { ...todo, isActive: true, checked: false }; // Set checked to false when setting to active
+      } else {
+        return todo;
+      }
+    })
+  );
+}
 
   
-
+  
 
 return (
 <div>
@@ -392,14 +357,41 @@ Long-term Goal
   {/* Clear tasks that are completed */}
   <div className="row">
   <div className="col-sm-12 col-md-6 col-lg-6">
+
+    {/* button to set selected task to archived */}
     <button
       type="button"
       className="btn btn-primary"
-      onClick={handleClearCompleted}
+      onClick={handleSetToArchive}
     >
       Archive selected tasks
     </button>
+ 
+
+{/* button to set selected task to active*/}
+<button
+      type="button"
+      className="btn btn-primary"
+      onClick={handleSetToActive}
+    >
+      set tasks as active
+    </button>
   </div>
+
+  {/* button to set selected task to complete*/}
+{/* <button
+      type="button"
+      className="btn btn-primary"
+      onClick={handleSetToActive}
+    >
+      set selected tasks as completed
+    </button>
+  </div>
+    */}
+
+
+
+
   <div className="col-sm-12 col-md-6 col-lg-6">
     <label htmlFor="filterMode"> Select to show all or archived tasks:</label>
     <select
@@ -414,16 +406,13 @@ Long-term Goal
   </div>
 </div>
 
-{/* <ToDoList
-todos={todos}
-toggleTodo={handleToggleComplete}
-editTodo={handleEditTodoClick}
-/> */}
+
 <ToDoList
-  todos={filteredTodos()}
-  toggleTodo={handleToggleComplete}
-  editTodo={handleEditTodoClick}
-/>
+        todos={filteredTodos()}
+        toggleTodo={handleToggleChecked} // Changed from handleToggleComplete to handleToggleChecked
+        editTodo={handleEditTodoClick}
+        toggleFinished={handleToggleFinished} // New prop to handle 'finished' state
+      />
 
 
 

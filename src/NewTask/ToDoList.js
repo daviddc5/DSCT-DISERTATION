@@ -8,7 +8,7 @@ function ToDoList(props) {
       {props.todos.map((todo) => (
         <li
           className={`list-group-item d-flex justify-content-between align-items-center ${
-            todo.complete ? "bg-success text-white" : ""
+            todo.checked ? "bg-success text-white" : ""
           }`}
           key={todo.id}
         >
@@ -17,7 +17,7 @@ function ToDoList(props) {
               <input
                 className="form-check-input big-checkbox"
                 type="checkbox"
-                checked={todo.complete}
+                checked={todo.checked}
                 onChange={() => props.toggleTodo(todo.id)}
               />
             </div>
@@ -25,7 +25,7 @@ function ToDoList(props) {
               <div className="form-check mb-2">
                 <label
                   className={`form-check-label h4 mb-0 ${
-                    todo.complete ? "text-white" : ""
+                    todo.checked ? "text-white" : ""
                   }`}
                 >
                   {todo.name}
@@ -49,6 +49,11 @@ function ToDoList(props) {
                     <strong>Due date:</strong> {todo.dueDate}
                   </p>
                 )}
+                {todo.tags && todo.tags.length > 0 && (
+                  <p className="mb-0">
+                    <strong>Tags:</strong> {todo.tags.join(", ")}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -59,7 +64,6 @@ function ToDoList(props) {
             >
               Edit
             </button>
-            
           </div>
         </li>
       ))}

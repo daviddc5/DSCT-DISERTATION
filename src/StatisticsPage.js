@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import NavBar from "./NavBar/NavBar";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -6,7 +6,8 @@ import Col from "react-bootstrap/Col";
 import moment from "moment";
 import RechartsLineChart from "./TodayPage/RechartsLineChart";
 
-function StatisticsPage({ todos = [], setTodos, chartData}) {
+//takes in from approutes the todos and the chartData
+function StatisticsPage({ todos = [], chartData}) {
   const [selectedTaskForStats, setSelectedTaskForStats] = useState("");
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("week");
   const [filteredChartData, setFilteredChartData] = useState([]);
@@ -16,87 +17,41 @@ function StatisticsPage({ todos = [], setTodos, chartData}) {
     setSelectedTaskForStats(event.target.value);
   }
 
-  const filterChartData = () => {
+// This code defines a memoized function called filterChartData using the useCallback hook. It takes no arguments and returns nothing, but it sets the state of filteredChartData based on the selectedTaskForStats, selectedTimeFrame, and todos state variables.
+// By using useCallback, the function is only redefined when one of its dependencies changes, which can help with performance optimization.
+  const filterChartData = useCallback(() => {
     if (!selectedTaskForStats) {
       setFilteredChartData([]);
       return;
     }
-
+  
     const task = todos.find((task) => task.id === selectedTaskForStats);
     const taskTimeLogged = task.timeLogged || [];
-
+  
     const today = moment();
     const startDate = moment(today);
-
+  
     if (selectedTimeFrame === "week") {
       startDate.subtract(7, "days");
     } else if (selectedTimeFrame === "month") {
       startDate.subtract(1, "months");
     }
-
+  
     const filteredData = taskTimeLogged
       .filter((log) => moment(log.date).isSameOrAfter(startDate))
       .map((log) => ({
         date: log.date,
         progress: log.progress,
       }));
-
+  
     setFilteredChartData(filteredData);
-  };
+  }, [selectedTaskForStats, selectedTimeFrame, todos]);
+  
 
   useEffect(() => {
     filterChartData();
   }, [selectedTaskForStats, selectedTimeFrame, filterChartData]);
 
-  function handleProgressLog(taskId, progress) {
-    const task = todos.find((task) => task.id === taskId);
-
-    if (!task) {
-      console.error("Task not found:", taskId);
-      return;
-    }
-
-    const currentDate = moment().format("YYYY-MM-DD");
-    const timeLogged = task.timeLogged || [];
-
-    const existingTimeLog = timeLogged.find((log) => log.date === currentDate);
-
-    if (existingTimeLog) {
-      const newProgress = existingTimeLog.progress + progress;
-      if (newProgress <= 100) {
-        existingTimeLog.progress = newProgress;
-      } else {
-        alert("Progress cannot be more than 100%");
-        return;
-      }
-    } else {
-      const newTimeLogged = {
-        date: currentDate,
-        progress: progress,
-        taskName: task.name,
-      };
-      timeLogged.push(newTimeLogged);
-    }
-
-    const newTodos = todos.map((task) => {
-      if (task.id === taskId) {
-        return {
-          ...task,
-          timeLogged: timeLogged,
-        };
-      } else {
-        return task;
-      }
-    });
-    setTodos(newTodos);
-
-    const newChartDataItem = {
-      taskName: task.name,
-      date: currentDate,
-      progress: progress,
-    };
-    setChartData([...chartData, newChartDataItem]);
-  }
 
   function handleClearData() {
     setChartData([]);

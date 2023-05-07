@@ -1,7 +1,7 @@
 import TaskChat from './TaskChat';
 import React from 'react';
 import Navbar from './NavBar/NavBar';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
 const offlineSuggestions = [
   'Go for a walk with a friend',
@@ -22,17 +22,6 @@ function getRandomSuggestion() {
 }
 
 function SocialPage({ users, currentUser, task }) {
-  let taskAdvice = '';
-  switch (task) {
-    case 'Task 1':
-      taskAdvice = 'Advice for completing Task 1';
-      break;
-    case 'Task 2':
-      taskAdvice = 'Advice for completing Task 2';
-      break;
-    default:
-      taskAdvice = '';
-  }
 
   return (
     <>
