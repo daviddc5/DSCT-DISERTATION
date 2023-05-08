@@ -405,7 +405,7 @@ Long-term Goal
     {/* button to set selected task to archived */}
     <button
       type="button"
-      className="btn btn-primary"
+      className="btn btn-primary btn-block"
       onClick={handleSetToArchive}
     >
       Archive selected tasks
@@ -415,7 +415,7 @@ Long-term Goal
 {/* button to set selected task to active*/}
 <button
       type="button"
-      className="btn btn-primary"
+      className="btn btn-primary btn-block"
       onClick={handleSetToActive}
     >
       Activate selected tasks
@@ -424,7 +424,7 @@ Long-term Goal
 {/* delete tasks selected */}
   <button
   type="button"
-  className="btn btn-danger"
+  className="btn btn-danger btn-block"
   onClick={handleDeleteSelectedTasks}
 >
   Delete selected tasks
@@ -433,7 +433,7 @@ Long-term Goal
 {/* button to mark as completed */}
 <button
   type="button"
-  className="btn btn-success"
+  className="btn btn-success btn-block"
   onClick={handleMarkAsCompleted}
 >
   Mark selection  complete

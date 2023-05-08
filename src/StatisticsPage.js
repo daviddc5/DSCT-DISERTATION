@@ -59,8 +59,7 @@ function StatisticsPage({ todos, chartData, setChartData }) {
     setFilteredChartData([]);
   }
 
- 
-  
+
   // console.log('StatisticsPage filteredChartData', filteredChartData);
 
   return (
@@ -70,7 +69,7 @@ function StatisticsPage({ todos, chartData, setChartData }) {
         <Row className="justify-content-center">
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
-              <p>Select a task for statistics:</p>
+              <p> Select to show Hours worked on given task:</p>
               <select
                 value={selectedTaskForStats}
                 onChange={handleTaskChangeForStats}
