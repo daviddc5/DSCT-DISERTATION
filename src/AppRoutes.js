@@ -7,6 +7,8 @@ import WeeklyPage from "./WeeklyPage";
 import SocialPage from "./SocialPage";
 import NewTask from "./NewTask/NewTask";
 import TodayPage from "./TodayPage/TodayPage";
+// import initial todos
+import InitialTodos from "./NewTask/InitialTodos";
 
 function AppRoutes() {
   const [todos, setTodos] = useState(() => {
@@ -14,12 +16,17 @@ function AppRoutes() {
     return storedTodos ? JSON.parse(storedTodos) : [];
   });
 
-  const [chartData, setChartData] = useState([]);
+  useEffect(() => {
+    if (todos.length === 0) {
+      setTodos(InitialTodos);
+    }
+  }, [todos]);
 
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
+  const [chartData, setChartData] = useState([]);
   const [timerSettings, setTimerSettings] = useState({
     workTime: 25,
     shortBreakTime: 5,
@@ -30,16 +37,9 @@ function AppRoutes() {
     setTimerSettings(newSettings.timerSettings);
   };
 
-  // Dummy users data
-  const users = [
-    { id: 1, name: "L", icon: "/path/to/icon1.png", goal: "Learn React" },
-    { id: 2, name: "Adrian", icon: "/path/to/icon2.png", goal: "Learn Node.js" },
-    // ...
-  ];
+ 
 
-  const currentUser = {
-    id: 1, // Set the logged-in user's id
-  };
+ 
 
   return (
     <Routes>
@@ -58,7 +58,7 @@ function AppRoutes() {
       />
       <Route
         path="/social"
-        element={<SocialPage users={users} currentUser={currentUser} />}
+        element={<SocialPage/>}
       />
       <Route path="/newTask" element={<NewTask todos={todos} setTodos={setTodos} />} />
       <Route
@@ -67,6 +67,7 @@ function AppRoutes() {
           <TodayPage
             todos={todos}
             setTodos={setTodos}
+            initialTodos={InitialTodos}
             timerSettings={timerSettings}
             chartData={chartData}
             setChartData={setChartData}

@@ -9,6 +9,8 @@ import Select from "react-select";
 import ToDoList from "./ToDoList";
 import NavBar from "../NavBar/NavBar";
 import softwareOptions from "./softwareOptions";
+import tagOptions from "./tagOptions";
+
 // import weely page
 // Importing styles
 import "./NewTask.css";
@@ -24,6 +26,9 @@ function NewTask({todos, setTodos}) {
   const [dueDate, setDueDate] = useState("");
   const [filterMode, setFilterMode] = useState("active");
   const [selectedDays, setSelectedDays] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+
 
   // 1. Update your state to include an array of day objects:
   const [days, setDays] = useState([
@@ -44,20 +49,28 @@ function NewTask({todos, setTodos}) {
     { name: "Friday", checked: false },
     { name: "Saturday", checked: false },
   ];
+
+  
+ 
   
   // This is a function that handles the addition of a new todo item.
   function handleAddTodo() { 
+
+     // Add console logs here
+ 
+
     const name = todoNameRef.current.value;
     const description = todoDescriptionRef.current.value;
     const software = selectedSoftware.map((option) => option.value);
-  
+    const tags = selectedTags.map((option) => option.value);
     if (
       name === "" ||
       description === "" ||
       selectedDays.length === 0 ||
       goalType === null ||
-      selectedSoftware.length === 0 ||
-      !dueDate
+      !dueDate||
+      software.length === 0||
+      tags.length === 0
     ) {
       return;
     }
@@ -74,6 +87,7 @@ function NewTask({todos, setTodos}) {
               days:selectedDays,
               goalType: goalType,
               dueDate: dueDate,
+             tags:tags
              
             
             };
@@ -94,6 +108,7 @@ function NewTask({todos, setTodos}) {
           days:selectedDays,
           goalType: goalType,
           dueDate: dueDate,
+          tags: tags,
           isActive: true,
           checked: false,
           finished:false
@@ -108,6 +123,7 @@ function NewTask({todos, setTodos}) {
     setSelectedSoftware([]);
     setDueDate("");
     setSelectedDays([]);
+    setSelectedTags([]);
   }
   
 
@@ -133,11 +149,18 @@ function NewTask({todos, setTodos}) {
       });
     // ...
   const selectedSoftwareOptions = todo.software.map((software) =>
-  softwareOptions.find((option) => option.value === software)
-  
-);
+  softwareOptions.find((option) => option.value === software));
 setSelectedSoftware(selectedSoftwareOptions);
 setDueDate(todo.dueDate);
+
+const selectedTagOptions = todo.tags.map((tag) =>
+  tagOptions.find((option) => option.value === tag)
+);
+setSelectedTags(selectedTagOptions);
+
+ // Add console log here
+
+
     
   
   }
@@ -195,6 +218,8 @@ function filteredTodos() {
       return todo.isActive && !todo.finished;
     } else if (filterMode === "archived") {
       return !todo.isActive && !todo.finished;
+    } else if (filterMode === "completed") {
+      return !todo.isActive  &&  todo.finished; // Add this condition
     } else {
       return true;
     }
@@ -202,11 +227,16 @@ function filteredTodos() {
 }
 
 
+function handleDeleteSelectedTasks() {
+  setTodos((prevTodos) => prevTodos.filter((todo) => !todo.checked));
+}
+
+
 function handleSetToArchive() {
   setTodos((prevTodos) =>
     prevTodos.map((todo) => {
       if (todo.checked) {
-        return { ...todo, isActive: false, checked: false }; // Set checked to false when archiving
+        return { ...todo, isActive: false, checked: false, finished:false}; // Set checked to false when archiving
       } else {
         return todo;
       }
@@ -218,13 +248,25 @@ function handleSetToActive() {
   setTodos((prevTodos) =>
     prevTodos.map((todo) => {
       if (todo.checked) {
-        return { ...todo, isActive: true, checked: false }; // Set checked to false when setting to active
+        return { ...todo, isActive: true, checked: false, finished:false }; // Set checked to false when setting to active
       } else {
         return todo;
       }
     })
   );
 }
+
+function handleMarkAsCompleted() {
+  setTodos((prevTodos) =>
+    prevTodos.map((todo) => {
+      if (todo.checked) {
+        return { ...todo, isActive: false, checked: false, finished: true };
+      }
+      return todo;
+    })
+  );
+}
+
 
   
   
@@ -238,16 +280,10 @@ return (
 
 <div className="container-fluid">
 <div className="row mt-3">
-
-
 {/* Form column */}
 <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
 <div className="form-container">
 {/* Form content */}
-
-
-
-
 {/*  Name reference */}
 <label htmlFor="todoName">Name of the Goal</label>
 <input
@@ -316,7 +352,7 @@ Long-term Goal
 
 {/* software */}
 <div className="form-group">
-  <label htmlFor="software">Applications required for the goal</label>
+  <label htmlFor="software">Applications required for the goal(optional)</label>
   <Select
     isMulti
     className="basic-multi-select"
@@ -333,9 +369,22 @@ Long-term Goal
   <input type="date" className="form-control" id="dueDate" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
 </div>
 
+{/* tags */}
+<div className="form-group">
+  <label htmlFor="tags">Tags:</label>
+  <Select
+    isMulti
+    className="basic-multi-select"
+    classNamePrefix="select"
+    id="tags"
+    options={tagOptions}
+    value={selectedTags}
+    onChange={(selectedOptions) => setSelectedTags(selectedOptions)}
+  />
+</div>
 
 
-
+{/* handle add to do button */}
 </div>
 <button
   type="button"
@@ -344,17 +393,12 @@ Long-term Goal
 >
   Add to do
 </button>
-
-
-
 </div>
-
-
 </div>
-
 {/* ToDoList column */}
 <div className="col-xl-4 col-lg-6 col-md-6 col-sm-12">
   {/* Clear tasks that are completed */}
+
   <div className="row">
   <div className="col-sm-12 col-md-6 col-lg-6">
 
@@ -366,43 +410,50 @@ Long-term Goal
     >
       Archive selected tasks
     </button>
- 
-
+    
+    
 {/* button to set selected task to active*/}
 <button
       type="button"
       className="btn btn-primary"
       onClick={handleSetToActive}
     >
-      set tasks as active
+      Activate selected tasks
     </button>
-  </div>
 
-  {/* button to set selected task to complete*/}
-{/* <button
-      type="button"
-      className="btn btn-primary"
-      onClick={handleSetToActive}
-    >
-      set selected tasks as completed
-    </button>
-  </div>
-    */}
+{/* delete tasks selected */}
+  <button
+  type="button"
+  className="btn btn-danger"
+  onClick={handleDeleteSelectedTasks}
+>
+  Delete selected tasks
+</button>
 
+{/* button to mark as completed */}
+<button
+  type="button"
+  className="btn btn-success"
+  onClick={handleMarkAsCompleted}
+>
+  Mark selection  complete
+</button>
 
-
+</div>
 
   <div className="col-sm-12 col-md-6 col-lg-6">
-    <label htmlFor="filterMode"> Select to show all or archived tasks:</label>
+    <label htmlFor="filterMode"> Press here to select tasks:</label>
     <select
-      className="form-control"
-      id="filterMode"
-      value={filterMode}
-      onChange={(e) => setFilterMode(e.target.value)}
-    >
-      <option value="active">Show Active Tasks</option>
-      <option value="archived">Show Archived Tasks</option>
-    </select>
+  className="form-control"
+  id="filterMode"
+  value={filterMode}
+  onChange={(e) => setFilterMode(e.target.value)}
+>
+  <option value="active">Show Active Tasks</option>
+  <option value="archived">Show Archived Tasks</option>
+  <option value="completed">Show Completed Tasks</option> {/* Add this line */}
+</select>
+
   </div>
 </div>
 
@@ -414,12 +465,7 @@ Long-term Goal
         toggleFinished={handleToggleFinished} // New prop to handle 'finished' state
       />
 
-
-
 </div>
-
-
-
 </div>
 
 

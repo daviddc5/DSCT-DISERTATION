@@ -21,7 +21,7 @@ function getRandomSuggestion() {
   return offlineSuggestions[index];
 }
 
-function SocialPage({ users, currentUser, task }) {
+function SocialPage({ task }) {
 
   return (
     <>

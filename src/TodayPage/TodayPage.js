@@ -9,7 +9,7 @@ import RechartsLineChart from "./RechartsLineChart";
 
 
 
-function TodayPage({ todos = [], setTodos, timerSettings, chartData, setChartData }) {
+function TodayPage({ todos, setTodos, timerSettings, chartData, setChartData }) {
   const [selectedTask, setSelectedTask] = useState("");
   const [hoursWorked, setHoursWorked] = useState(0);
   const [selectedTaskForStats, setSelectedTaskForStats] = useState("");
@@ -57,31 +57,30 @@ useEffect(() => {
 
  
 
-
+//toggles beteween month and week
 function handleTimeRangeToggle() {
   setTimeRange(timeRange === "month" ? "week" : "month");
 }
-
+//clear data for given task
 function handleClearData() {
   setFilteredChartData([]);
 }
-
+// task change selected for stats
 function handleTaskChangeForStats(event) {
   setSelectedTaskForStats(event.target.value);
 }
 
+
+//task change for logging hours
 function handleTaskChange(event) {
   setSelectedTask(event.target.value);
-
   // Filter tasks for the current day and are active
   const currentDay = moment().format("dddd");
   const tasksForDay = todos.filter(
     (task) => task.days.includes(currentDay) && task.isActive
   );
-
   // Get the selected task
   const task = tasksForDay.find((task) => task.id === event.target.value);
-
   // Set the selected task for stats
   setSelectedTaskForStats(task ? task.id : "");
 }
@@ -89,14 +88,14 @@ function handleTaskChange(event) {
 
 
 
-
+//changes hours based on input depending on range
   function handleHoursChange(event) {
     const hours = Number(event.target.value);
     if (hours >= 0 && hours <= 24) {
       setHoursWorked(hours);
     }
   }
-
+// logs hours for a task
   function handleHoursSubmit(event) {
     event.preventDefault();
     if (!selectedTask) {
@@ -177,6 +176,7 @@ function handleTaskChange(event) {
           </Col>
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
+              {/* select a task button options */}
               <p>Select a task:</p>
               <select
                 value={selectedTask}
@@ -184,12 +184,16 @@ function handleTaskChange(event) {
                 className="form-select"
               >
                 <option value="">--Select a task--</option>
-                {todos.map((task) => (
-                  <option key={task.id} value={task.id}>
-                    {task.name}
-                  </option>
-                ))}
+              {todos
+              .filter((task) => task.days.includes(moment().format("dddd")) && task.isActive)
+              .map((task) => (
+              <option key={task.id} value={task.id}>
+              {task.name}
+              </option>
+              ))}
+
               </select>
+              {/* form to submit hours worked on a task */}
               <form onSubmit={handleHoursSubmit} className="mt-3">
                 <label htmlFor="hoursWorked">Hours worked:</label>
                 <input
@@ -199,6 +203,7 @@ function handleTaskChange(event) {
                   onChange={handleHoursChange}
                   className="form-control"
                 />
+                {/* button that submits time worked on a task */}
                 <button type="submit" className="btn btn-primary mt-3">
                   Log hours
                 </button>
@@ -207,13 +212,14 @@ function handleTaskChange(event) {
           </Col>
         </Row>
         <Row className="mt-5">
-
+          {/* week or month toggle */}
         <div className="mt-3">
   <button onClick={handleTimeRangeToggle} className="btn btn-secondary">
     Toggle {timeRange === "month" ? "Week" : "Month"}
   </button>
 </div>
 
+{/*  Select button to choose statistics from */}
 <Row className="mt-3">
   <Col xs="12" md="6">
     <p>Select a task for statistics:</p>
@@ -222,14 +228,20 @@ function handleTaskChange(event) {
       onChange={handleTaskChangeForStats}
       className="form-select"
     >
+      
+     
       <option value="">--Select a task--</option>
-      {todos.map((task) => (
-        <option key={task.id} value={task.id}>
-          {task.name}
+      {todos
+              .filter((task) => task.days.includes(moment().format("dddd")) && task.isActive)
+              .map((task) => (
+              <option key={task.id} value={task.id}>
+              {task.name}
+              
         </option>
       ))}
     </select>
   </Col>
+  {/* clear data from stats task button */}
   <Col xs="12" md="6" className="d-flex align-items-end">
     <div className="mt-3">
       <button onClick={handleClearData} className="btn btn-danger">
