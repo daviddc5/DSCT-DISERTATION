@@ -6,58 +6,67 @@ import Col from "react-bootstrap/Col";
 import moment from "moment";
 import RechartsLineChart from "./TodayPage/RechartsLineChart";
 
-//takes in from approutes the todos and the chartData
-function StatisticsPage({ todos = [], chartData}) {
+//chartdata is passed 
+function StatisticsPage({ todos, chartData, setChartData }) {
   const [selectedTaskForStats, setSelectedTaskForStats] = useState("");
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("week");
   const [filteredChartData, setFilteredChartData] = useState([]);
-  const [setChartData] = useState([]);
 
   function handleTaskChangeForStats(event) {
     setSelectedTaskForStats(event.target.value);
   }
 
-// This code defines a memoized function called filterChartData using the useCallback hook. It takes no arguments and returns nothing, but it sets the state of filteredChartData based on the selectedTaskForStats, selectedTimeFrame, and todos state variables.
-// By using useCallback, the function is only redefined when one of its dependencies changes, which can help with performance optimization.
+  
   const filterChartData = useCallback(() => {
     if (!selectedTaskForStats) {
       setFilteredChartData([]);
       return;
     }
   
-    const task = todos.find((task) => task.id === selectedTaskForStats);
-    const taskTimeLogged = task.timeLogged || [];
-  
-    const today = moment();
-    const startDate = moment(today);
-  
+    const startDate = moment();
     if (selectedTimeFrame === "week") {
       startDate.subtract(7, "days");
     } else if (selectedTimeFrame === "month") {
       startDate.subtract(1, "months");
     }
+    const filteredData = chartData
+    .filter(
+      (log) =>
+        log.taskName ===
+          todos.find((task) => task.id === selectedTaskForStats).name &&
+        moment(log.date).isSameOrAfter(startDate)
+    )
+    .map((log) => ({
+      date: log.date,
+      time: log.hours, // change "hours" to "time" here
+    }));
   
-    const filteredData = taskTimeLogged
-      .filter((log) => moment(log.date).isSameOrAfter(startDate))
-      .map((log) => ({
-        date: log.date,
-        progress: log.progress,
-      }));
+  setFilteredChartData(filteredData);
   
-    setFilteredChartData(filteredData);
-  }, [selectedTaskForStats, selectedTimeFrame, todos]);
+  
+    console.log("Filtered data:", filteredData); // Add this line
+  
+    
+  }, [selectedTaskForStats, selectedTimeFrame, todos, chartData]);
   
 
   useEffect(() => {
     filterChartData();
   }, [selectedTaskForStats, selectedTimeFrame, filterChartData]);
 
-
   function handleClearData() {
-    setChartData([]);
+    if (!selectedTaskForStats) {
+      return;
+    }
+
+    const updatedChartData = chartData.filter(
+      (log) => log.taskName !== todos.find((task) => task.id === selectedTaskForStats).name
+    );
+
+    setChartData(updatedChartData);
     setFilteredChartData([]);
   }
-  
+  console.log('StatisticsPage filteredChartData', filteredChartData);
 
   return (
     <div>
@@ -83,9 +92,7 @@ function StatisticsPage({ todos = [], chartData}) {
           </Col>
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
-              <button onClick={() => handleClearData(selectedTaskForStats)}>
-                Clear data
-              </button>
+              <button onClick={handleClearData} className="btn btn-danger">Clear data</button>
               <div className="mt-3">
                 <p>Select time frame:</p>
                 <button
@@ -104,10 +111,14 @@ function StatisticsPage({ todos = [], chartData}) {
             </div>
           </Col>
         </Row>
-        <RechartsLineChart chartData={filteredChartData} />
+        <Row className="mt-5">
+          <Col>
+          
+            <RechartsLineChart chartData={filteredChartData} />
+          </Col>
+        </Row>
       </Container>
     </div>
   );
-                }  
-  export default StatisticsPage
-  
+                }
+  export default StatisticsPage;

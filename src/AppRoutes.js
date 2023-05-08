@@ -11,22 +11,18 @@ import TodayPage from "./TodayPage/TodayPage";
 import InitialTodos from "./NewTask/InitialTodos";
 
 function AppRoutes() {
+  // sets todos to local storage
   const [todos, setTodos] = useState(() => {
     const storedTodos = localStorage.getItem("todos");
-    return storedTodos ? JSON.parse(storedTodos) : [];
+    return storedTodos ? JSON.parse(storedTodos) : InitialTodos;
   });
 
-  useEffect(() => {
-    if (todos.length === 0) {
-      setTodos(InitialTodos);
-    }
-  }, [todos]);
+  // initial settings for the timer
+  const [chartData, setChartData] = useState(() => {
+    const storedChartData = localStorage.getItem("chartData");
+    return storedChartData ? JSON.parse(storedChartData) : [];
+  });
 
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
-
-  const [chartData, setChartData] = useState([]);
   const [timerSettings, setTimerSettings] = useState({
     workTime: 25,
     shortBreakTime: 5,
@@ -37,9 +33,15 @@ function AppRoutes() {
     setTimerSettings(newSettings.timerSettings);
   };
 
- 
+  // makes local storage data stored as json into strings
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
- 
+  // Update localStorage whenever chartData changes
+  useEffect(() => {
+    localStorage.setItem("chartData", JSON.stringify(chartData));
+  }, [chartData]);
 
   return (
     <Routes>
@@ -50,16 +52,13 @@ function AppRoutes() {
       />
       <Route
         path="/statistics"
-        element={<StatisticsPage todos={todos} setTodos={setTodos} chartData={chartData} setChartData={setChartData} />}
+        element={<StatisticsPage todos={todos} chartData={chartData} setChartData={setChartData} />}
       />
       <Route
         path="/weekly"
         element={<WeeklyPage todos={todos} setTodos={setTodos} />}
       />
-      <Route
-        path="/social"
-        element={<SocialPage/>}
-      />
+      <Route path="/social" element={<SocialPage />} />
       <Route path="/newTask" element={<NewTask todos={todos} setTodos={setTodos} />} />
       <Route
         path="/today"

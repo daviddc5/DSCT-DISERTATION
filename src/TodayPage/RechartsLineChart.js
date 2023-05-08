@@ -4,9 +4,6 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 const RechartsLineChart = ({ chartData }) => {
-  
-
-  
 
   return (
     <LineChart width={600} height={300} data={chartData}>
@@ -18,7 +15,7 @@ const RechartsLineChart = ({ chartData }) => {
       <Line
   key="taskHours"
   type="monotone"
-  dataKey="time"
+  dataKey="time"  
   stroke="#8884d8"
   activeDot={{ r: 8 }}
 />

@@ -10,9 +10,11 @@ import RechartsLineChart from "./RechartsLineChart";
 
 
 function TodayPage({ todos, setTodos, timerSettings, chartData, setChartData }) {
+
   const [selectedTask, setSelectedTask] = useState("");
   const [hoursWorked, setHoursWorked] = useState(0);
   const [selectedTaskForStats, setSelectedTaskForStats] = useState("");
+
   const [filteredChartData, setFilteredChartData] = useState([]);
   const [timeRange, setTimeRange] = useState("month");
 
