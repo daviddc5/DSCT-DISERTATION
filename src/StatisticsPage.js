@@ -55,18 +55,13 @@ function StatisticsPage({ todos, chartData, setChartData }) {
   }, [selectedTaskForStats, selectedTimeFrame, filterChartData]);
 
   function handleClearData() {
-    if (!selectedTaskForStats) {
-      return;
-    }
-
-    const updatedChartData = chartData.filter(
-      (log) => log.taskName !== todos.find((task) => task.id === selectedTaskForStats).name
-    );
-
-    setChartData(updatedChartData);
+    setChartData([]);
     setFilteredChartData([]);
   }
-  console.log('StatisticsPage filteredChartData', filteredChartData);
+
+ 
+  
+  // console.log('StatisticsPage filteredChartData', filteredChartData);
 
   return (
     <div>
