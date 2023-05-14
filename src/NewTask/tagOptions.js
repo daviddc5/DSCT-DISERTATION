@@ -16,6 +16,7 @@ const tagOptions = [
   { value: 'community', label: 'Community' },
   { value: 'creativity', label: 'Creativity' },
   { value: 'learning', label: 'Learning' },
+  { value: 'other', label: 'Other' },
 ];
 
 

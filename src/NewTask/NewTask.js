@@ -157,12 +157,7 @@ const selectedTagOptions = todo.tags.map((tag) =>
   tagOptions.find((option) => option.value === tag)
 );
 setSelectedTags(selectedTagOptions);
-
- // Add console log here
-
-
-    
-  
+// Add console log here
   }
 
     //functions setters for the todos

@@ -97,6 +97,7 @@ function TodayPage({ todos, setTodos, timerSettings, chartData, setChartData }) 
         <Row className="justify-content-center">
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
+            <h3>Work Session Timer</h3>
               <Timer
                 workTime={timerSettings.workTime}
                 shortBreakTime={timerSettings.shortBreakTime}
@@ -106,7 +107,7 @@ function TodayPage({ todos, setTodos, timerSettings, chartData, setChartData }) 
           </Col>
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
-              <p>Select a task:</p>
+            <h3>Log Hours worked on a selected task  </h3>
               <select
                 value={selectedTask}
                 onChange={handleTaskChange}
@@ -124,6 +125,7 @@ function TodayPage({ todos, setTodos, timerSettings, chartData, setChartData }) 
                     </option>
                   ))}
               </select>
+              
               <form onSubmit={handleHoursSubmit} className="mt-3">
                 <label htmlFor="hoursWorked">Hours worked:</label>
                 <input

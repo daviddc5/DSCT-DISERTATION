@@ -70,13 +70,15 @@ function StatisticsPage({ todos, chartData, setChartData }) {
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
               <p> Select to show Hours worked on given task:</p>
-              <select
-                value={selectedTaskForStats}
-                onChange={handleTaskChangeForStats}
-                className="form-select"
+                          <select
+              value={selectedTaskForStats}
+              onChange={handleTaskChangeForStats}
+              className="form-select"
               >
-                <option value="">--Select a task--</option>
-                {todos.map((task) => (
+              <option value="">--Select a task--</option>
+              {todos
+                .filter(task => task.isActive)  // Only include tasks that are active
+                .map((task) => (
                   <option key={task.id} value={task.id}>
                     {task.name}
                   </option>
