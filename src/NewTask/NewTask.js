@@ -1,5 +1,5 @@
 // Importing React and hooks
-import React, { useState, useRef} from "react";
+import React, { useState, useRef, useEffect, useCallback} from "react";
 
 // Importing external libraries
 import { v4 as uuidv4 } from "uuid";
@@ -10,12 +10,13 @@ import ToDoList from "./ToDoList";
 import NavBar from "../NavBar/NavBar";
 import softwareOptions from "./softwareOptions";
 import tagOptions from "./tagOptions";
+import moment from "moment";
 
 // import weely page
 // Importing styles
 import "./NewTask.css";
 
-function NewTask({todos, setTodos}) {
+function NewTask({todos, setTodos, completionOfTasksStats, setCompletionOfTasksStats}) {
   const [editingTodo, setEditingTodo] = useState(null);
   // use refs for todos
   const todoNameRef = useRef();
@@ -89,7 +90,7 @@ function NewTask({todos, setTodos}) {
               dueDate: dueDate,
              tags:tags
              
-            
+    
             };
           } else {
             return todo;
@@ -111,7 +112,8 @@ function NewTask({todos, setTodos}) {
           tags: tags,
           isActive: true,
           checked: false,
-          finished:false
+          finished:false,
+          completionDate: null // initially null completion date till finished
         },
       ]);
     }
@@ -251,20 +253,50 @@ function handleSetToActive() {
   );
 }
 
+//marks as complete and gets the date for this
 function handleMarkAsCompleted() {
-  setTodos((prevTodos) =>
-    prevTodos.map((todo) => {
+  const currentDate = moment().format('YYYY-MM-DD'); // Get the current date in YYYY-MM-DD format
+  
+  setTodos((prevTodos) => {
+    const updatedTodos = prevTodos.map((todo) => {
       if (todo.checked) {
-        return { ...todo, isActive: false, checked: false, finished: true };
+        return { ...todo, isActive: false, checked: false, finished: true, completionDate: currentDate };
       }
       return todo;
-    })
-  );
+    });
+    return updatedTodos;
+  });
 }
 
+// A counter for the short and long term tasks completed together with their dates
+const setTaskCompletionStatistics = useCallback(() => {
+  setCompletionOfTasksStats(prevStats => {
+    const stats = {
+      shortTerm: {...prevStats.shortTerm},
+      longTerm: {...prevStats.longTerm},
+    };
 
-  
-  
+    for (let todo of todos) {
+      if (todo.finished && todo.completionDate) {
+        const targetStats = todo.goalType === "short-term" ? stats.shortTerm : stats.longTerm;
+
+        if (targetStats[todo.completionDate]) {
+          targetStats[todo.completionDate]++;
+        } else {
+          targetStats[todo.completionDate] = 1;
+        }
+      }
+    }
+    return stats;
+  });
+}, [todos, setCompletionOfTasksStats]);
+
+// This effect runs every time `todos` is updated
+useEffect(() => {
+  setTaskCompletionStatistics();
+}, [setTaskCompletionStatistics]);
+
+
 
 return (
 <div>
@@ -459,19 +491,11 @@ Long-term Goal
         editTodo={handleEditTodoClick}
         toggleFinished={handleToggleFinished} // New prop to handle 'finished' state
       />
-
 </div>
 </div>
-
-
         </div>
-        
-
       </div>
-  
-   
 );
-
 }
 
 export default NewTask;

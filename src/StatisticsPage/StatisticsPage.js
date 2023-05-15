@@ -1,17 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
-import NavBar from "./NavBar/NavBar";
+import NavBar from "../NavBar/NavBar";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import moment from "moment";
-import RechartsLineChart from "./TodayPage/RechartsLineChart";
+import RechartsLineChart from "./RechartsLineChart";
 
 //chartdata is passed 
-function StatisticsPage({ todos, chartData, setChartData }) {
+function StatisticsPage({ todos, chartData, setChartData, completionOfTasksStats }) {
+  console.log(completionOfTasksStats)
   const [selectedTaskForStats, setSelectedTaskForStats] = useState("");
   const [selectedTimeFrame, setSelectedTimeFrame] = useState("week");
   const [filteredChartData, setFilteredChartData] = useState([]);
 
+  
+  const [selectedGoalType, setSelectedGoalType] = useState("shortTerm");
+
+
+
+  function handleGoalTypeChange(event) {
+    
+    setSelectedGoalType(event.target.value);
+  }
+
+  
   function handleTaskChangeForStats(event) {
     setSelectedTaskForStats(event.target.value);
   }
@@ -48,7 +60,6 @@ function StatisticsPage({ todos, chartData, setChartData }) {
   
     
   }, [selectedTaskForStats, selectedTimeFrame, todos, chartData]);
-  
 
   useEffect(() => {
     filterChartData();
@@ -59,8 +70,67 @@ function StatisticsPage({ todos, chartData, setChartData }) {
     setFilteredChartData([]);
   }
 
-
-  // console.log('StatisticsPage filteredChartData', filteredChartData);
+  function getTasksCompletedToday(goalType) {
+    const today = moment().format('YYYY-MM-DD');
+    console.log('Today:', today);
+    console.log('Completion stats:', completionOfTasksStats);
+    console.log('Selected goal type:', goalType);
+  
+    if (!completionOfTasksStats) {
+      console.log('completionOfTasksStats is undefined');
+      return 0;
+    }
+  
+    if (!completionOfTasksStats[goalType]) {
+      console.log(`completionOfTasksStats does not have property '${goalType}'`);
+      return 0;
+    }
+  
+    console.log('Selected goal type stats:', completionOfTasksStats[goalType]);
+    console.log('Today\'s stats for selected goal type:', completionOfTasksStats[goalType][today]);
+  
+    const tasksCompletedToday = completionOfTasksStats[goalType][today] || 0;
+  
+    console.log('Tasks completed today:', tasksCompletedToday);
+    return tasksCompletedToday;
+  }
+  
+  
+  function getTasksCompletedInWeek(goalType) {
+    const startDate = moment().startOf('week');
+    const endDate = moment().endOf('week');
+    let tasks = 0;
+  
+    if(completionOfTasksStats[goalType]) {
+      for (let m = moment(startDate); m.diff(endDate, 'days') <= 0; m.add(1, 'days')) {
+        const day = m.format('YYYY-MM-DD');
+        if(completionOfTasksStats[goalType][day]) {
+            tasks += completionOfTasksStats[goalType][day];
+        }
+      }
+    }
+  
+    return tasks;
+  }
+  
+  function getTasksCompletedInMonth(goalType) {
+    const startDate = moment().startOf('month');
+    const endDate = moment().endOf('month');
+    let tasks = 0;
+  
+    if(completionOfTasksStats[goalType]) {
+      for (let m = moment(startDate); m.diff(endDate, 'days') <= 0; m.add(1, 'days')) {
+        const day = m.format('YYYY-MM-DD');
+        if(completionOfTasksStats[goalType][day]) {
+            tasks += completionOfTasksStats[goalType][day];
+        }
+      }
+    }
+  
+    return tasks;
+  }
+  
+  
 
   return (
     <div>
@@ -85,6 +155,9 @@ function StatisticsPage({ todos, chartData, setChartData }) {
                 ))}
               </select>
             </div>
+
+
+
           </Col>
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
@@ -113,6 +186,30 @@ function StatisticsPage({ todos, chartData, setChartData }) {
             <RechartsLineChart chartData={filteredChartData} />
           </Col>
         </Row>
+
+        <br></br>
+        <br></br>
+        <br></br>
+
+<div className="bg-light rounded-3 p-3">
+  <p>Select to show number of completed tasks by goal type:</p>
+
+  <select
+    value={selectedGoalType}
+    onChange={handleGoalTypeChange}
+    className="form-select"
+  >
+    <option value="shortTerm">shortTerm</option>
+    <option value="longTerm">longTerm</option>
+  </select>
+</div>
+        <div className="mt-3">
+  <p>Number of {selectedGoalType} tasks completed today: {getTasksCompletedToday(selectedGoalType)}</p>
+  <p>Number of {selectedGoalType} tasks completed this week: {getTasksCompletedInWeek(selectedGoalType)}</p>
+  <p>Number of {selectedGoalType} tasks completed this month: {getTasksCompletedInMonth(selectedGoalType)}</p>
+</div>
+
+        
       </Container>
     </div>
   );

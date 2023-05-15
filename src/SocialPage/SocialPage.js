@@ -1,6 +1,6 @@
 import TaskChat from './taskChat';
 import React, { useState } from 'react';
-import Navbar from './NavBar/NavBar';
+import Navbar from '../NavBar/NavBar';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 
 const offlineSuggestions = [
