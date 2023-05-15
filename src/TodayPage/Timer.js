@@ -7,12 +7,43 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+import soundFile from './Notification.mp3';
 
-function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
+function Timer({ workTime, shortBreakTime, longBreakTime }) {
   const [seconds, setSeconds] = useState(workTime * 60);
   const [isActive, setIsActive] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [isLongBreak, setIsLongBreak] = useState(false);
+  
+  const audio = useMemo(() => new Audio(soundFile), []);
+
+  useEffect(() => {
+    return () => {
+      audio.pause();
+    };
+  }, [audio]);
+
+  useEffect(() => {
+    let interval = null;
+    
+    const handleAudioPlay = () => {
+      audio.play();
+    };
+    
+    if (isActive && seconds > 0) {
+      interval = setInterval(() => {
+        setSeconds((seconds) => seconds - 1);
+      }, 1000);
+    } else if (seconds === 0) {
+      setIsActive(false);
+      if (isBreak) {
+        handleAudioPlay();
+      } else {
+        handleAudioPlay();
+      }
+    }
+    return () => clearInterval(interval);
+  }, [isActive, seconds, isBreak, isLongBreak, longBreakTime, shortBreakTime, audio]);
   
 
   function toggle() {
@@ -36,40 +67,6 @@ function Timer({ workTime, shortBreakTime, longBreakTime, onTimeLog }) {
     setIsBreak(!isBreak);
     reset();
   }
-
-
-  const audio = useMemo(() => new Audio("./TodayPage/Notification.mp3"), []);
-
-useEffect(() => {
-  return () => {
-    audio.pause();
-  };
-}, [audio]);
-
-
-  useEffect(() => {
-    let interval = null;
-    
-    const handleAudioPlay = () => {
-      audio.play();
-    };
-    
-    if (isActive && seconds > 0) {
-      interval = setInterval(() => {
-        setSeconds((seconds) => seconds - 1);
-      }, 1000);
-    } else if (seconds === 0) {
-      setIsActive(false);
-      if (isBreak) {
-        onTimeLog(isLongBreak ? longBreakTime : shortBreakTime);
-        handleAudioPlay();
-      } else {
-        handleAudioPlay();
-      }
-    }
-    return () => clearInterval(interval);
-  }, [  isActive,  seconds,  isBreak,  isLongBreak,  onTimeLog,  longBreakTime,  shortBreakTime,  audio]);
-  
 
   const minutes = Math.floor(seconds / 60);
   const displaySeconds =
@@ -106,37 +103,37 @@ useEffect(() => {
                 >
                   {isBreak ? "Work" : "Break"}
                 </Button>
-                {isBreak && (
-                  <ButtonGroup className="mb-2">
-                    <Button
-                      variant={isLongBreak ? "warning rounded-3" : "info rounded-3"}
-                      onClick={() => {
-                        setIsLongBreak(true);
-                        setSeconds(longBreakTime * 60);
-                      }}
-                      size="lg"
-                      disabled={isActive}
-                    >
-                      Long Break
-                    </Button>
-                    <Button
-                      variant={isLongBreak ? "info rounded-3" : "warning rounded-3"}
-                      onClick={() => {
-                        setIsLongBreak(false);
-                        setSeconds(shortBreakTime * 60);
-                      }}
-                      size="lg"
-                      disabled={isActive}
-                    >
-                      Short Break
-                    </Button>
-                  </ButtonGroup>
-                )}
               </ButtonGroup>
+              {isBreak && (
+                <ButtonGroup className="mb-2">
+                  <Button
+                    variant={isLongBreak ? "warning rounded-3" : "info rounded-3"}
+                    onClick={() => {
+                      setIsLongBreak(true);
+                      setSeconds(longBreakTime * 60);
+                    }}
+                    size="lg"
+                    disabled={isActive}
+                  >
+                    Long Break
+                  </Button>
+                  <Button
+                    variant={isLongBreak ? "info rounded-3" : "warning rounded-3"}
+                    onClick={() => {
+                      setIsLongBreak(false);
+                      setSeconds(shortBreakTime * 60);
+                    }}
+                    size="lg"
+                    disabled={isActive}
+                  >
+                    Short Break
+                  </Button>
+                </ButtonGroup>
+              )}
             </div>
           </Col>
         </Row>
       </Container>
     );
-                    }
-                    export default Timer;    
+                  }
+                   export default Timer    

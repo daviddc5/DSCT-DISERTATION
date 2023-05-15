@@ -107,7 +107,7 @@ function TodayPage({ todos, setTodos, timerSettings, chartData, setChartData }) 
           </Col>
           <Col xs="12" md="6">
             <div className="bg-light rounded-3 p-3">
-            <h3>Log Hours worked on a selected task  </h3>
+            <h3>Log Hours worked on a task  </h3>
               <select
                 value={selectedTask}
                 onChange={handleTaskChange}

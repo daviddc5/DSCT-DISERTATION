@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-
+import TagMessages from './TagMessages';
 
 function TaskChat({ task }) {
-  const [messages, setMessages] = useState([
-    { sender: 'user1', message: 'Hey, anyone else working on react' },
-    { sender: 'user2', message: "Yes, I am! How's it going?" },
+  // In TaskChat component
+  console.log(task);
+  const lowerCaseTask = typeof task === 'string' ? task.toLowerCase().trim() : '';
 
-  ]);
+  const [messages, setMessages] = useState(TagMessages[lowerCaseTask] || []);
+
   const [newMessage, setNewMessage] = useState('');
 
   function handleNewMessageChange(event) {

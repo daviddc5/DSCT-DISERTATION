@@ -1,25 +1,25 @@
-// RechartsLineChart.js
-
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Label } from 'recharts';
 
 const RechartsLineChart = ({ chartData }) => {
-
   return (
-    <LineChart width={600} height={300} data={chartData}>
-      <XAxis dataKey="date" />
-      <YAxis />
+    <LineChart width={800} height={400} data={chartData}>
+      <XAxis dataKey="date">
+        <Label value="Time" offset={-3} position="insideBottom" />
+      </XAxis>
+      <YAxis>
+        <Label value="Hours Worked" angle={-90} position='insideLeft' offset={10} />
+      </YAxis>
       <Tooltip />
       <Legend />
       <CartesianGrid stroke="#f5f5f5" />
       <Line
-  key="taskHours"
-  type="monotone"
-  dataKey="time"  
-  stroke="#8884d8"
-  activeDot={{ r: 8 }}
-/>
-
+        key="taskHours"
+        type="monotone"
+        dataKey="time"
+        stroke="#4444d8"  
+        activeDot={{ r: 8 }}
+      />
     </LineChart>
   );
 };

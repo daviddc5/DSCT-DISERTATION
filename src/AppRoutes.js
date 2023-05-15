@@ -58,7 +58,7 @@ function AppRoutes() {
         path="/weekly"
         element={<WeeklyPage todos={todos} setTodos={setTodos} />}
       />
-      <Route path="/social" element={<SocialPage />} />
+      <Route path="/social" element={<SocialPage todos={todos} />} />
       <Route path="/newTask" element={<NewTask todos={todos} setTodos={setTodos} />} />
       <Route
         path="/today"

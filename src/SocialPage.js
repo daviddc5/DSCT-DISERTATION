@@ -1,7 +1,7 @@
-import TaskChat from './TaskChat';
-import React from 'react';
+import TaskChat from './taskChat';
+import React, { useState } from 'react';
 import Navbar from './NavBar/NavBar';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 
 const offlineSuggestions = [
   'Go for a walk with a friend',
@@ -21,7 +21,20 @@ function getRandomSuggestion() {
   return offlineSuggestions[index];
 }
 
-function SocialPage({ task }) {
+function SocialPage({ todos }) {
+  const activeTodos = todos.filter((todo) => todo.isActive === true);
+  
+  // Flatten all the tags from active todos and remove duplicates
+  const tags = [...new Set(activeTodos.flatMap((todo) => todo.tags))];
+
+  const [selectedCategory, setSelectedCategory] = useState(null); // State variable for the selected category
+
+  
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(selectedCategory === category ? null : category);
+  };
+  
 
   return (
     <>
@@ -29,10 +42,24 @@ function SocialPage({ task }) {
       <Container className="my-5">
         <Row className="gx-5">
           <Col md={6}>
-            <TaskChat task={task} />
+            <h2>Discussions Based On Your Interests</h2>
+
+            {tags.map((tag, index) => (
+              <div key={index} className="mb-4">
+                <h5>{tag}</h5>
+                <Button
+                  className="mb-2"
+                  onClick={() => handleCategoryClick(tag)}
+                  variant={selectedCategory === tag ? 'primary' : 'outline-primary'}
+                >
+                  {tag}
+                </Button>
+                {selectedCategory === tag && <TaskChat task={tag} />}
+              </div>
+            ))}
           </Col>
+
           <Col md={6}>
-          
             <h2>Wellbeing Advice</h2>
             <Card className="mb-4">
               <Card.Body>
